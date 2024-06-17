@@ -1,18 +1,27 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <router-view />
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-
+import productApi from "@/js/api/productApi";
 export default {
-  name: 'App',
-  components: {
-    HelloWorld
-  }
-}
+  name: "App",
+  components: {},
+  async created() {
+    const me = this;
+    const brands = await productApi.getAll();
+    console.log("All news:", brands);
+    me.showToast();
+  },
+  mounted() {},
+  methods: {
+    showToast() {
+      this.$toast.success("Tạo thành công");
+    },
+  },
+};
 </script>
+
 
 <style>
 #app {

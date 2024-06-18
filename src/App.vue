@@ -9,27 +9,27 @@ export default {
   components: {},
   async created() {
     const me = this;
-    const brands = await productApi.getAll();
-    console.log("All news:", brands);
-    me.showToast();
+    // const brands = await productApi.getAll();
+    // console.log("All news:", brands);
   },
   mounted() {},
-  methods: {
-    showToast() {
-      this.$toast.success("Tạo thành công");
-    },
-  },
+  methods: {},
 };
 </script>
 
-
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+* {
+  margin: 0;
+  padding: 0;
+  font-family: Roboto;
+}
+
+@font-face {
+  font-family: Roboto;
+  src: url(../src/assets/fonts/Roboto-Regular.ttf);
+}
+
+html {
+  scroll-behavior: smooth;
 }
 </style>

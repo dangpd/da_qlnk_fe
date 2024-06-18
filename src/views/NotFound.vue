@@ -1,23 +1,26 @@
 <template>
-    <div class="div-link" style="margin: 10px 0;">
-        <router-link to="/admin/dashload" class="line-link">Trang chủ </router-link>/ {{ this.name }} {{ this.detail }}
+    <div>
+        <div class="not-found">
+            <img src="../assets/image/404.jpg" alt="">
+        </div>
     </div>
 </template>
 
 <script>
+
 export default {
     /**
-             * Tên component
-             */
-    name: 'AdminLineLink',
+ * Tên component
+ */
+    name: 'NotFound ',
     /**
      * Hứng nhận
      */
-    props: ["name", "detail"],
+    props: [""],
     /**
      * Component được sử dụng
      */
-    components: {},
+    components: { },
     /**
      * Emit sự thay đổi
      */
@@ -51,4 +54,16 @@ export default {
 }
 </script>
 
-<style></style>
+<style>
+.not-found {
+    margin: 140px 100px 0;
+}
+
+.not-found img {
+    display: flex;
+    align-items: center;
+    margin: 0 auto;
+    width: 500px;
+    height: 500px;
+}
+</style>

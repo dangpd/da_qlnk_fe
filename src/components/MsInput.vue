@@ -1,83 +1,107 @@
 <template>
-    <div>
-        <input class="m-input" :type="type" :placeholder="placeholder" :style="styleInput" v-model="value"
-            :class="{ 'confirm': confirm }" @input="onInput">
-        <div class="under_input" v-show="showError">
-            <label for="" style="font-size: 14px;">{{ messError }}</label>
-        </div>
+  <div>
+    <input
+      class="m-input"
+      :type="type"
+      :placeholder="placeholder"
+      :style="styleInput"
+      v-model="value"
+      @input="onInput"
+      @keyup.enter="onEnter"
+      :class="{ 'error-input': showError }"
+    />
+    <div class="under_input" v-show="showError">
+      <label style="font-size: 14px">{{ messError }}</label>
     </div>
+  </div>
 </template>
   
 <script>
 export default {
-    /**
-     * Tên component
-     */
-    name: 'MInput',
-    /**
-     * Hứng nhận
-     */
-    props: ["placeholder", "styleInput", "type", "modelValue", "messError", "required"],
-    /**
-     * Component được sử dụng
-     */
-    components: {},
-    /**
-     * Emit sự thay đổi
-     */
-    emits: ["update:modelValue"],
-    directives: {
+  /**
+   * Tên component
+   */
+  name: "MsInput",
+  /**
+   * Hứng nhận
+   */
+  props: {
+    placeholder: {
+      type: String,
+      default: "",
+    },
+    styleInput: {
+      type: Object,
+      default: () => ({}),
+    },
+    type: {
+      type: String,
+      default: "",
+    },
+    modelValue: {
+      type: [String, Number],
+      default: "",
+    },
+    required: {
+      type: Boolean,
+      default: false,
+    },
+  },
 
+  /**
+   * Component được sử dụng
+   */
+  components: {},
+  directives: {},
+  /**
+   * Data
+   */
+  data() {
+    return {
+      value: "",
+      showError: false,
+      messError: "",
+    };
+  },
+  /**
+   * Phương thức
+   */
+  methods: {
+    validate() {
+      if (!this.value || this.value == "") {
+        this.showError = true;
+        this.messError = "Không được bỏ trống";
+      } else {
+        this.showError = false;
+        this.messError = "";
+      }
     },
-    /**
-     * Data
-     */
-    data() {
-        return {
-            value: "",
-            confirm: false,
-            showError: false,
-        }
+    onEnter() {
+      if (this.required) {
+        this.validate();
+      }
+      if (!this.showError) {
+        this.$emit("enterInput", this.value);
+      }
     },
-    /**
-     * Phương thức
-     */
-    methods: {
-        validate() {
-            // if (this.requied) {
-            this.showError = true;
-            this.confirm = true;
-            // }
-        },
-
-        onInput() {
-            // Kiểm tra giá trị nhập vào tự input
-            this.value = event.target.value;
-            // Update giá trị value
-            this.$emit("update:modelValue", event.target.value);
-            // Không show lỗi
-            this.showError = false;
-            this.confirm = false;
-        }
+  },
+  created() {
+    this.value = this.modelValue;
+  },
+  /**
+   * Theo dõi sự thay đổi
+   */
+  watch: {
+    value(newVal) {
+      this.value = newVal;
+      if (this.required) {
+        this.validate();
+      }
     },
-    created() {
-        this.value = this.modelValue
-    },
-    /**
-     * Theo dõi sự thay đổi
-     */
-    watch: {
-        value(newVal) {
-            this.$emit("update:modelValue", newVal);
-        },
-        modelValue(newVal) {
-            this.value = newVal;
-            // this.$emit("update:modelValue", newVal);
-        }
-    }
-}
+  },
+};
 </script>
   
 <style>
-@import url(../css/components/input.css);
+@import url(../assets/css/components/input.css);
 </style>

@@ -2,7 +2,7 @@
   <div>
     <div class="ahomecontent">
       <AdminNavbar></AdminNavbar>
-      <div class="arouter-view-content" style="z-index: 1">
+      <div class="arouter-view-content" style="height: 100vh">
         <router-view></router-view>
       </div>
     </div>
@@ -10,7 +10,7 @@
 </template>
   
 <script>
-import AdminNavbar from '@/layout/AdminNavbar.vue'
+import AdminNavbar from "@/layout/AdminNavbar.vue";
 export default {
   /**
    * Tên component

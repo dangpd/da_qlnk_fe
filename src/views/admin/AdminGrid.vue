@@ -53,6 +53,10 @@ export default {
       type: Array,
       default: () => [],
     },
+    data: {
+      type: Array,
+      default: () => [],
+    },
   },
   /**
    * Component được sử dụng
@@ -64,7 +68,6 @@ export default {
   data() {
     return {
       textSearch: "",
-      data: [],
     };
   },
   computed: {},
@@ -89,42 +92,8 @@ export default {
     loadData(payload) {
       console.log(payload);
     },
-    generateData() {
-      // Số lượng dữ liệu cần sinh
-      const numberOfItems = 102;
-
-      // Mảng chứa các quốc gia có sẵn
-      const countries = [
-        "USA",
-        "Canada",
-        "UK",
-        "Germany",
-        "France",
-        "Australia",
-        "Japan",
-        "China",
-        "India",
-      ];
-
-      // Sinh dữ liệu ngẫu nhiên
-      for (let i = 0; i <= numberOfItems; i++) {
-        const randomName = "Person " + (i + 1);
-        const randomAge = Math.floor(Math.random() * 50 + 20); // Tuổi từ 20 đến 70
-        const randomCountry =
-          countries[Math.floor(Math.random() * countries.length)];
-
-        // Thêm vào mảng data
-        this.data.push({
-          name: randomName,
-          age: randomAge,
-          country: randomCountry,
-        });
-      }
-    },
   },
-  created() {
-    this.generateData(); // Gọi hàm sinh dữ liệu khi component được tạo
-  },
+  created() {},
   /**
    * Theo dõi sự thay đổi
    */

@@ -9,6 +9,7 @@
         v-for="(item, index) in data"
         :key="index"
         :class="{ 'item-active': checkActive(item.url) }"
+        @click="changeRouter(item.url, item.children.length > 0 ? true : false)"
       >
         <div class="anav__text">
           {{ item.name }}
@@ -16,18 +17,18 @@
         <i
           style="color: black"
           class="fa-solid fa-chevron-down"
-          v-if="item.children.length > 0"
+          v-show="item.children.length > 0"
         ></i>
         <div
-          v-if="item.children.length > 0"
+          v-show="item.children.length > 0"
           :class="'anav-submenu'"
-          :style="{ 'z-index': index + 1 }"
+          :style="{ 'z-index': index }"
         >
           <div
             class="anav-item-submenu"
             v-for="(itemC, indexC) in item.children"
             :key="indexC"
-            @click="changeRouter(itemC.url)"
+            @click.stop="changeRouter(itemC.url)"
           >
             <div class="anav__texts">{{ itemC.name }}</div>
           </div>
@@ -85,10 +86,6 @@ export default {
               url: "/admin/catalog-management/positions",
             },
             {
-              name: "Lịch hẹn khám",
-              url: "/admin/catalog-management/appointments",
-            },
-            {
               name: "Danh mục chuyên khoa",
               url: "/admin/catalog-management/specialties",
             },
@@ -114,10 +111,14 @@ export default {
   },
   methods: {
     checkActive(data) {
-      return this.$route.path === data;
+      return this.$route.path.split("/")[2] == data.split("/")[2];
     },
-    changeRouter(url) {
-      // Implement the router change logic here
+    changeRouter(url, hasChildren = false) {
+      if (this.$route.path != url) {
+        if (!hasChildren) {
+          this.$router.push(url); // Thay đổi đường dẫn sử dụng Vue Router
+        }
+      }
     },
   },
 };

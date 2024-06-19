@@ -208,11 +208,14 @@ export default {
   watch: {
     pageSize: {
       handler(newVal, oldVal) {
-        this.createPageNumber();
-        this.$emit("loadData", {
-          pageChoice: 1,
-          pageSize: newVal,
-        });
+        if (newVal) {
+          this.pageChoice = 1;
+          this.createPageNumber();
+          this.$emit("loadData", {
+            pageChoice: 1,
+            pageSize: newVal,
+          });
+        }
       },
     },
   },

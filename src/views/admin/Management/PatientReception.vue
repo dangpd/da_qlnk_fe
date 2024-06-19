@@ -5,12 +5,12 @@
 </template>
   
   <script>
-import AdminGrid from "./AdminGrid.vue";
+import AdminGrid from "../AdminGrid.vue";
 export default {
   /**
    * Tên component
    */
-  name: "AdminNavbar",
+  name: "PatientReceptionManagement",
   /**
    * Hứng nhận
    */
@@ -24,7 +24,7 @@ export default {
    */
   data() {
     return {
-      title: "Danh sách người dùng",
+      title: "Danh sách tiếp đón bệnh nhân",
       columns: [
         { name: "Name", field: "name", width: "200px" },
         { name: "Age", field: "age", width: "300px" },
@@ -46,5 +46,4 @@ export default {
 </script>
   
   <style>
-@import url(../../assets/css/admin/adminuser.css);
 </style>

@@ -6,40 +6,34 @@ class BaseApi extends baseService {
     // Không cần khai báo endpoint ở đây, vì sẽ được định nghĩa trong lớp con
   }
 
-  // Lấy tất cả các Brand
-  async getAll() {
+  async getAll(showLoading = true) {
     const endpoint = this.endpoint;
-    return this.get(endpoint);
+    return this.get(endpoint, showLoading);
   }
 
-  // Lấy thông tin Brand theo ID
-  async getById(id) {
+  async getById(id, showLoading = true) {
     const endpoint = `${this.endpoint}/${id}`;
-    return this.get(endpoint);
+    return this.get(endpoint, showLoading);
   }
 
-  // Thêm mới một Brand
-  async add(brandData) {
+  async add(brandData, showLoading = true) {
     const endpoint = this.endpoint;
-    return this.post(endpoint, brandData);
+    return this.post(endpoint, brandData, showLoading);
   }
 
-  // Cập nhật thông tin của một Brand
-  async update(id, brandData) {
+  async update(id, brandData, showLoading = true) {
     const endpoint = `${this.endpoint}/${id}`;
-    return this.put(endpoint, brandData);
+    return this.put(endpoint, brandData, showLoading);
   }
 
-  // Xóa một Brand dựa vào ID
-  async delete(id) {
+  async delete(id, showLoading = true) {
     const endpoint = `${this.endpoint}/${id}`;
-    return this.delete(endpoint);
+    return this.delete(endpoint, showLoading);
   }
 
-  // Lọc danh sách các Brand
-  async filter(key = "", pageSize, pageNumber) {
+  async filter(key = "", pageSize, pageNumber, showLoading = true) {
     const endpoint = `${this.endpoint}/Filter?textSearch=${key}&pageSize=${pageSize}&pageNumber=${pageNumber}`;
-    return this.get(endpoint);
+    return this.get(endpoint, showLoading);
   }
 }
 

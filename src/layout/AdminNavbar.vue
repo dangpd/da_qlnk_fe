@@ -119,7 +119,10 @@ export default {
   },
   methods: {
     checkActive(data) {
-      return this.$route.path.split("/")[2] == data.split("/")[2];
+      if (this.$route.path.split("/")[2] && data.split("/")[2]) {
+        return this.$route.path.split("/")[2] == data.split("/")[2];
+      }
+      return false;
     },
     changeRouter(url, hasChildren = false) {
       if (this.$route.path != url) {

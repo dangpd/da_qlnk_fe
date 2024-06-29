@@ -6,8 +6,15 @@
 export default {
   name: "App",
   components: {},
-  async created() {},
-  mounted() {},
+  created() {},
+  mounted() {
+    const token = localStorage.getItem("jwtToken");
+    if (token) {
+      this.$router.push("/statistics");
+    } else {
+      this.$router.push("/login");
+    }
+  },
   methods: {},
 };
 </script>

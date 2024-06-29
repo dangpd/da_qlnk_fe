@@ -5,8 +5,8 @@ const enumResouce = {
      */
     gender: {
         Male: 1,
-        Female: 0,
-        Other: 2,
+        Female: 2,
+        Other: 0,
     },
     /**
      * Loại form

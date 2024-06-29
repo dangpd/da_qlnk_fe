@@ -1,8 +1,21 @@
 <template>
   <div class="admin-content">
-    <div class="header">
-      <img class="header-img" src="../../assets/image/logonhakhoa.jpg" alt="" />
-      Xin chào, Đăng
+    <div
+      class="header"
+      v-click-outside-element="closeBtn"
+      @click="showBtnLogout"
+    >
+      <div class="header1" :class="{ 'text-decr': showLogout }">
+        <img
+          class="header-img"
+          src="../../assets/image/logonhakhoa.jpg"
+          alt=""
+        />
+        Xin chào, {{ fullName }}
+      </div>
+      <div class="logout" v-show="showLogout" @click.stop="logout">
+        Đăng xuất
+      </div>
     </div>
     <div class="line"></div>
     <div class="title">{{ title }}</div>
@@ -82,6 +95,8 @@ export default {
   data() {
     return {
       textSearch: "",
+      fullName: localStorage.getItem("fullname"),
+      showLogout: false,
     };
   },
   computed: {},
@@ -89,6 +104,17 @@ export default {
    * Phương thức
    */
   methods: {
+    showBtnLogout() {
+      this.showLogout = !this.showLogout;
+    },
+    closeBtn() {
+      this.showLogout = false;
+    },
+    logout() {
+      localStorage.removeItem("jwtToken");
+      localStorage.removeItem("fullname");
+      this.$router.push("/login");
+    },
     actionButtonClick() {
       let obj = {
         [this.idField]: 0,
@@ -134,4 +160,7 @@ export default {
   
   <style>
 @import url(../../assets/css/admin/admingrid.css);
+.text-decr {
+  text-decoration: underline;
+}
 </style>

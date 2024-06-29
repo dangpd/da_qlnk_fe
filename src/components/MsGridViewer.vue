@@ -34,7 +34,7 @@
               :key="colIndex"
               :style="{ width: column.width }"
             >
-              {{ item[column.field] }}
+              {{ formatColumnData(item[column.field], column.type) }}
             </td>
             <td
               v-if="showAction"
@@ -99,6 +99,7 @@
 </template>
 
 <script>
+import enumResouce from "@/js/resource/resource";
 export default {
   name: "MsGridViewer",
   props: {
@@ -175,6 +176,28 @@ export default {
   },
   created() {},
   methods: {
+    formatColumnData(value, type) {
+      if (type === "datetime" && value) {
+        const date = new Date(value);
+        const day = date.getDate().toString().padStart(2, "0");
+        const month = (date.getMonth() + 1).toString().padStart(2, "0");
+        const year = date.getFullYear();
+        return `${day}/${month}/${year}`;
+      }
+      if (type === "combobox" && value >= 0) {
+        switch (value) {
+          case enumResouce.gender.Male:
+            return "Name";
+          case enumResouce.gender.Female:
+            return "Nữ";
+          case enumResouce.gender.Other:
+            return "Khác";
+          default:
+            return value;
+        }
+      }
+      return value;
+    },
     trClick(row) {
       this.trSelected = row;
     },

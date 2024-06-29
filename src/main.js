@@ -22,6 +22,9 @@ import Toast, { useToast } from "vue-toastification";
 import "vue-toastification/dist/index.css";
 library.add(faUserSecret);
 
+import ElementPlus from 'element-plus'
+import 'element-plus/dist/index.css'
+
 import vueClickOutsideElement from "vue-click-outside-element";
 const app = createApp(App);
 app.use(store);
@@ -53,6 +56,6 @@ app.component("ms-selectbox", MsSelectBox);
 app.component("ms-popup", DetailPopup);
 app.component("ms-admin-grid", AdminGrid);
 app.component("ms-combobox", MsCombobox);
-
+app.use(ElementPlus)
 app.use(vueClickOutsideElement);
 app.mount("#app");

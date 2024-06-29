@@ -19,11 +19,53 @@
     </template>
     <template v-slot:body>
       <div class="field-item">
-        <div style="width: 150px">Tên phòng</div>
+        <div style="width: 150px">Bệnh nhân khám</div>
+        <ms-combobox
+          :useApi="false"
+          :dataProps="dataPatient"
+          v-model="currentItem.PatientID"
+          propValue="PatientID"
+          propName="fullname"
+          ref="cbxPatient"
+          style="width: 500px"
+        ></ms-combobox>
+      </div>
+      <div class="field-item">
+        <div style="width: 150px">Thời gian khám</div>
+        <el-date-picker
+          v-model="currentItem.DateScheduled"
+          format="YYYY/MM/DD"
+          value-format="YYYY-MM-DD"
+          type="date"
+          placeholder="Chọn ngày"
+        >
+        </el-date-picker>
+      </div>
+      <div class="field-item">
+        <div style="width: 150px">Nội dung khám</div>
         <ms-input
           :inpPopupDetail="true"
-          v-model="currentItem.clinicName"
+          v-model="currentItem.ExamContent"
         ></ms-input>
+      </div>
+      <div class="field-item">
+        <div style="width: 150px">Trạng thái</div>
+        <ms-input
+          :inpPopupDetail="true"
+          v-model="currentItem.Status"
+        ></ms-input>
+      </div>
+      <div class="field-item">
+        <div style="width: 150px">Bác sĩ khám</div>
+        <ms-combobox
+          :useApi="false"
+          :dataProps="dataDoctor"
+          v-model="currentItem.DoctorID"
+          propValue="DoctorID"
+          propName="DoctorName"
+          ref="cbxDoctor"
+          style="width: 500px"
+        ></ms-combobox>
       </div>
     </template>
     <template v-slot:footer></template>
@@ -32,11 +74,12 @@
   
   <script>
 import examScheduleApi from "@/js/api/managerment/examScheduleApi";
+import patientApi from "@/js/api/managerment/patientApi";
 export default {
   /**
    * Tên component
    */
-  name: "AppointmentsManagement",
+  name: "ExamScheduleManagement",
   /**
    * Hứng nhận
    */
@@ -52,11 +95,17 @@ export default {
     return {
       title: "Danh sách lịch hẹn khám",
       columns: [
-        { name: "Họ và tên", field: "fullName", width: "200px" }, // Tên cột "Họ và tên" với độ rộng 200px
-        { name: "Mã bệnh nhân", field: "patientID", width: "150px" }, // Tên cột "Mã bệnh nhân" với độ rộng 150px
-        { name: "Thời gian khám", field: "dateScheduled", width: "150px" }, // Tên cột "Thời gian khám" với độ rộng 150px
-        { name: "Chỉ số khám", field: "state", width: "150px" }, // Tên cột "Chỉ số khám" với độ rộng 150px
-        { name: "Trạng thái", field: "status", width: "150px" }, // Tên cột "Trạng thái" với độ rộng 150px
+        { name: "Họ và tên", field: "Fullname", width: "200px" }, // Tên cột "Họ và tên" với độ rộng 200px
+        { name: "Mã bệnh nhân", field: "PatientNumber", width: "150px" }, // Tên cột "Mã bệnh nhân" với độ rộng 150px
+        {
+          name: "Thời gian khám",
+          field: "DateScheduled",
+          type: "datetime",
+          width: "150px",
+        }, // Tên cột "Thời gian khám" với độ rộng 150px
+        { name: "Bác sĩ khám", field: "DoctorName", width: "150px" }, // Tên cột "Mã bệnh nhân" với độ rộng 150px
+        { name: "Nội dung khám", field: "ExamContent", width: "150px" }, // Tên cột "Mã bệnh nhân" với độ rộng 150px
+        { name: "Trạng thái", field: "StatusName", width: "150px" }, // Tên cột "Trạng thái" với độ rộng 150px
       ],
       data: [],
       total: 0,
@@ -69,7 +118,9 @@ export default {
       titleDetail: "Chi tiết lịch hẹn khám",
       currentItem: {},
       isAdd: false,
-      idField: "examScheduleID",
+      idField: "ExamScheduleID",
+      dataPatient: [],
+      dataDoctor: [],
     };
   },
   computed: {},
@@ -105,11 +156,16 @@ export default {
      * @param {*} data
      * @param {*} isNew
      */
-    addoredit(data = {}, isNew = false) {
+    async addoredit(data = {}, isNew = false) {
       const me = this;
-      me.currentItem = data;
-      me.showPopup = true;
+      me.currentItem = {};
       me.isAdd = isNew;
+      me.currentItem = data;
+      let res = await patientApi.getDataComboboxAsync();
+      if (res && res.length >= 0) {
+        me.dataPatient = res;
+      }
+      me.showPopup = true;
     },
 
     /**

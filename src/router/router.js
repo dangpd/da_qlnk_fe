@@ -1,6 +1,8 @@
 import { createRouter, createWebHistory } from "vue-router";
 import ForBidden from "@/views/ForBidden.vue"; // Trang báo lỗi 403
 import NotFound from "@/views/NotFound.vue"; // Trang báo lỗi 404
+//login
+import Login from "@/views/Login.vue";
 
 // Admin
 import AdminHome from "@/views/admin/AdminHome.vue"; // Trang chủ quản trị
@@ -11,7 +13,7 @@ import Management from "@/views/admin/Management/Management.vue"; // Trang quả
 import PatientReception from "@/views/admin/Management/PatientReception.vue"; // Trang tiếp đón bệnh nhân
 import MedicalRecords from "@/views/admin/Management/MedicalRecords.vue"; // Trang danh sách phiếu khám bệnh
 import Patients from "@/views/admin/Management/Patients.vue"; // Trang danh sách bệnh nhân
-import Appointments from "@/views/admin/Management/Appointments.vue"; // Trang lịch hẹn khám
+import Appointments from "@/views/admin/Management/ExamSchedule.vue"; // Trang lịch hẹn khám
 import MedicalHistory from "@/views/admin/Management/MedicalHistory.vue"; // Trang lịch sử khám bệnh
 
 // Catalog Management
@@ -68,6 +70,11 @@ const routes = [
         ],
       },
     ],
+  },
+  {
+    name: "login",
+    path: "/login",
+    component: Login,
   },
   // Trang báo lỗi 403 và 404
   { name: "forbidden", path: "/forbidden", component: ForBidden },

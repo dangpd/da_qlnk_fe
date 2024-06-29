@@ -3,15 +3,10 @@
 </template>
 
 <script>
-import productApi from "@/js/api/productApi";
 export default {
   name: "App",
   components: {},
-  async created() {
-    const me = this;
-    // const brands = await productApi.getAll();
-    // console.log("All news:", brands);
-  },
+  async created() {},
   mounted() {},
   methods: {},
 };

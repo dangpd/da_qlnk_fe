@@ -22,7 +22,7 @@ const instance = axios.create({
 class BaseService {
   constructor() {
     this.loadingElement = loadingInstance.$el;
-
+    this.loadingElement.style.display = "none";
     instance.interceptors.request.use(
       (config) => {
         if (config.showLoading) {
@@ -127,13 +127,7 @@ class BaseService {
   }
 
   handleError(error) {
-    if (error.response) {
-      console.log("Lỗi từ máy chủ:", error.response);
-    } else if (error.request) {
-      console.log("Không nhận được phản hồi từ máy chủ:", error.request);
-    } else {
-      console.log("Lỗi:", error.message);
-    }
+    console.log("Lỗi:", error.message);
   }
 }
 

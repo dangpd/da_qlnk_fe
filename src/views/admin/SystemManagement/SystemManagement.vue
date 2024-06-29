@@ -7,7 +7,7 @@ export default {
   /**
    * Tên component
    */
-  name: "SystemManagement ",
+  name: "SystemManagement",
   /**
    * Hứng nhận
    */

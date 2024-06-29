@@ -1,11 +1,37 @@
 <template>
   <div>
-    <AdminGrid :title="title" :columns="columns" :data="data"></AdminGrid>
+    <ms-admin-grid
+      :title="title"
+      :columns="columns"
+      :data="data"
+      :total="total"
+      :idField="idField"
+      @loadData="loadData"
+      @editRow="addoredit"
+      @add="addoredit"
+      @deleteRow="deleteRow"
+    ></ms-admin-grid>
   </div>
+
+  <ms-popup v-if="showPopup" @close="closePopup" @save="save">
+    <template v-slot:header>
+      {{ titleDetail }}
+    </template>
+    <template v-slot:body>
+      <div class="field-item">
+        <div style="width: 150px">Tên phòng</div>
+        <ms-input
+          :inpPopupDetail="true"
+          v-model="currentItem.clinicName"
+        ></ms-input>
+      </div>
+    </template>
+    <template v-slot:footer></template>
+  </ms-popup>
 </template>
   
   <script>
-import AdminGrid from "../AdminGrid.vue";
+import examResultApi from "@/js/api/managerment/examResultApi";
 export default {
   /**
    * Tên component
@@ -18,7 +44,7 @@ export default {
   /**
    * Component được sử dụng
    */
-  components: { AdminGrid },
+  components: {},
   /**
    * Data
    */
@@ -27,47 +53,108 @@ export default {
       title: "Danh sách lịch sử khám bệnh",
       columns: [
         { name: "Họ và tên", field: "fullName", width: "200px" }, // Cột Họ và tên, độ rộng 200px
-        { name: "Mã bệnh nhân", field: "patientCode", width: "150px" }, // Cột Mã bệnh nhân, độ rộng 150px
-        { name: "Thời gian khám", field: "examTime", width: "200px" }, // Cột Thời gian khám, độ rộng 200px
-        { name: "Chỉ số khám", field: "examIndex", width: "150px" }, // Cột Chỉ số khám, độ rộng 150px
-        { name: "Kết luận khám", field: "diagnosis", width: "250px" }, // Cột Kết luận khám, độ rộng 250px
+        { name: "Mã bệnh nhân", field: "patientID", width: "150px" }, // Cột Mã bệnh nhân, độ rộng 150px
+        { name: "Thời gian khám", field: "examDate", width: "200px" }, // Cột Thời gian khám, độ rộng 200px
+        { name: "Chỉ số khám", field: "receptionistID", width: "150px" }, // Cột Chỉ số khám, độ rộng 150px
+        { name: "Kết luận khám", field: "doctorID", width: "250px" }, // Cột Kết luận khám, độ rộng 250px
         { name: "Trạng thái", field: "status", width: "150px" }, // Cột Trạng thái, độ rộng 150px
       ],
-      data: [
-        {
-          fullName: "Nguyễn Văn A",
-          patientCode: "BN001",
-          examTime: "08:00 - 09:00, 2024-06-18",
-          examIndex: "120/80 mmHg",
-          diagnosis: "Bình thường",
-          status: "Đã khám",
-        },
-        {
-          fullName: "Trần Thị B",
-          patientCode: "BN002",
-          examTime: "09:30 - 10:30, 2024-06-18",
-          examIndex: "140/90 mmHg",
-          diagnosis: "Cần theo dõi",
-          status: "Chờ khám",
-        },
-        {
-          fullName: "Phạm Văn C",
-          patientCode: "BN003",
-          examTime: "10:30 - 11:30, 2024-06-18",
-          examIndex: "110/70 mmHg",
-          diagnosis: "Không nguy hiểm",
-          status: "Đã khám",
-        },
-        // Các dòng dữ liệu khác
-      ],
+      data: [],
+      total: 0,
+      payload: {
+        currentPage: 1,
+        pageSize: 20,
+        textSearch: "",
+      },
+      showPopup: false,
+      titleDetail: "Chi tiết lịch sử khám bệnh",
+      currentItem: {},
+      isAdd: false,
+      idField: "examResultID",
     };
   },
   computed: {},
   /**
    * Phương thức
    */
-  methods: {},
-  created() {},
+  methods: {
+    /**
+     * Load data
+     * @param {*} param
+     */
+    async loadData(param = {}) {
+      const me = this;
+      let payload = { ...me.payload, ...param };
+      let res = await examResultApi.getListAsync(payload);
+      if (res && res.data.length >= 0 && res.total >= 0) {
+        me.data = res.data;
+        me.total = res.total;
+      }
+    },
+
+    /**
+     * Đóng form
+     */
+    closePopup() {
+      const me = this;
+      me.showPopup = false;
+      me.loadData();
+    },
+
+    /**
+     * Thêm hoặc sửa
+     * @param {*} data
+     * @param {*} isNew
+     */
+    addoredit(data = {}, isNew = false) {
+      const me = this;
+      me.currentItem = data;
+      me.showPopup = true;
+      me.isAdd = isNew;
+    },
+
+    /**
+     * Lưu fỏrm
+     * @param {*} isNew
+     */
+    async save() {
+      const me = this;
+      let res = await examResultApi.insertOrUpdateAsync(me.currentItem);
+      if (me.isAdd) {
+        res
+          ? me.$toast.success("Thêm mới thành công")
+          : me.$toast.error("Thêm mới thất bại");
+      } else {
+        res
+          ? me.$toast.success("Sửa thành công")
+          : me.$toast.error("Sửa thất bại");
+      }
+      me.showPopup = false;
+      await me.loadData();
+    },
+
+    /**
+     * Xóa
+     * @param {*} data
+     */
+    async deleteRow(data) {
+      const me = this;
+      let res = await examResultApi.deleteAsync(
+        `${me.idField}=${data[me.idField]}`
+      );
+      if (res) {
+        me.$toast.success("Xóa thành công");
+      } else {
+        me.$toast.error("Xóa thất bại");
+      }
+      await me.loadData();
+    },
+  },
+  async created() {
+    const me = this;
+    me.loadData();
+  },
+
   /**
    * Theo dõi sự thay đổi
    */
@@ -76,4 +163,9 @@ export default {
 </script>
   
   <style>
+.field-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
 </style>

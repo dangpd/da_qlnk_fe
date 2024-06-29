@@ -46,63 +46,71 @@ export default {
       data: [
         {
           name: "Thống kê",
-          url: "/admin/statistics",
+          url: "/statistics",
           children: [],
         },
         {
           name: "Quản lý khám",
-          url: "/admin/management",
+          url: "/management",
           children: [
             {
               name: "Tiếp đón bệnh nhân",
-              url: "/admin/management/patient-reception",
+              url: "/management/patient-reception",
             },
             {
               name: "DS phiếu khám bệnh",
-              url: "/admin/management/medical-records",
+              url: "/management/medical-records",
             },
-            { name: "DS bệnh nhân", url: "/admin/management/patients" },
-            { name: "Lịch hẹn khám", url: "/admin/management/appointments" },
+            { name: "DS bệnh nhân", url: "/management/patients" },
+            { name: "Lịch hẹn khám", url: "/management/appointments" },
             {
               name: "Lịch sử khám bệnh",
-              url: "/admin/management/medical-history",
+              url: "/management/medical-history",
             },
           ],
         },
         {
           name: "Quản lý danh mục",
-          url: "/admin/catalog-management",
+          url: "/catalog-management",
           children: [
             {
               name: "Danh mục chỉ số khám",
-              url: "/admin/catalog-management/medical-indexes",
+              url: "/catalog-management/examcate",
+            },
+            {
+              name: "Danh sách chỉ số khám",
+              url: "/catalog-management/examination",
             },
             {
               name: "Danh mục thuốc",
-              url: "/admin/catalog-management/medicines",
+              url: "/catalog-management/medicalcate",
             },
             {
-              name: "Danh mục chức vụ",
-              url: "/admin/catalog-management/positions",
-            },
-            {
-              name: "Danh mục chuyên khoa",
-              url: "/admin/catalog-management/specialties",
+              name: "Danh sách thuốc",
+              url: "/catalog-management/medical",
             },
           ],
         },
         {
           name: "Quản trị hệ thống",
-          url: "/admin/system-management",
+          url: "/system-management",
           children: [
             {
               name: "Quản lý người dùng",
-              url: "/admin/system-management/users",
+              url: "/system-management/users",
             },
-            { name: "Quản lý phòng", url: "/admin/system-management/rooms" },
+            { name: "Quản lý phòng", url: "/system-management/rooms" },
             {
               name: "Danh sách quyền",
-              url: "/admin/system-management/permissions",
+              url: "/system-management/permissions",
+            },
+            {
+              name: "Danh mục chức vụ",
+              url: "/system-management/positions",
+            },
+            {
+              name: "Danh mục chuyên khoa",
+              url: "/system-management/specialties",
             },
           ],
         },

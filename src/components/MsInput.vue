@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div :class="{}">
     <input
       class="m-input"
       :type="type"
@@ -8,7 +8,7 @@
       v-model="value"
       @input="onInput"
       @keyup.enter="onEnter"
-      :class="{ 'error-input': showError }"
+      :class="{ 'error-input': showError, 'inp-popup-detail': inpPopupDetail }"
     />
     <div class="under_input" v-show="showError">
       <label style="font-size: 14px">{{ messError }}</label>
@@ -43,6 +43,10 @@ export default {
       default: "",
     },
     required: {
+      type: Boolean,
+      default: false,
+    },
+    inpPopupDetail: {
       type: Boolean,
       default: false,
     },
@@ -94,6 +98,7 @@ export default {
   watch: {
     value(newVal) {
       this.value = newVal;
+      this.$emit("update:modelValue", newVal);
       if (this.required) {
         this.validate();
       }
@@ -104,4 +109,7 @@ export default {
   
 <style>
 @import url(../assets/css/components/input.css);
+.inp-popup-detail {
+  width: 500px;
+}
 </style>

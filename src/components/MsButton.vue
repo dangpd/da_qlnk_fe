@@ -1,6 +1,12 @@
 <template>
   <div>
-    <button @click="actionButton" class="button">{{ placeholder }}</button>
+    <button
+      @click="actionButton"
+      class="button"
+      :class="type == 'secound' ? 'close-button' : ''"
+    >
+      {{ placeholder }}
+    </button>
   </div>
 </template>
     

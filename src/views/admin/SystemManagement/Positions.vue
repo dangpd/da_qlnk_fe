@@ -19,10 +19,10 @@
     </template>
     <template v-slot:body>
       <div class="field-item">
-        <div style="width: 150px">Tên phòng</div>
+        <div style="width: 150px">Tên chức vụ</div>
         <ms-input
           :inpPopupDetail="true"
-          v-model="currentItem.clinicName"
+          v-model="currentItem.positionName"
         ></ms-input>
       </div>
     </template>
@@ -31,12 +31,12 @@
 </template>
   
   <script>
-import examScheduleApi from "@/js/api/managerment/examScheduleApi";
+import positionApi from "@/js/api/systemmanagement/positionApi";
 export default {
   /**
    * Tên component
    */
-  name: "AppointmentsManagement",
+  name: "PositionsManagement",
   /**
    * Hứng nhận
    */
@@ -50,13 +50,10 @@ export default {
    */
   data() {
     return {
-      title: "Danh sách lịch hẹn khám",
+      title: "Danh mục chức vụ",
       columns: [
-        { name: "Họ và tên", field: "fullName", width: "200px" }, // Tên cột "Họ và tên" với độ rộng 200px
-        { name: "Mã bệnh nhân", field: "patientID", width: "150px" }, // Tên cột "Mã bệnh nhân" với độ rộng 150px
-        { name: "Thời gian khám", field: "dateScheduled", width: "150px" }, // Tên cột "Thời gian khám" với độ rộng 150px
-        { name: "Chỉ số khám", field: "state", width: "150px" }, // Tên cột "Chỉ số khám" với độ rộng 150px
-        { name: "Trạng thái", field: "status", width: "150px" }, // Tên cột "Trạng thái" với độ rộng 150px
+        { name: "Chức vụ", field: "positionName", width: "200px" }, // Tên cột "Chức vụ" với độ rộng 200px
+        { name: "Số lượng", field: "totalUser", width: "150px" }, // Tên cột "Số lượng" với độ rộng 150px
       ],
       data: [],
       total: 0,
@@ -66,10 +63,10 @@ export default {
         textSearch: "",
       },
       showPopup: false,
-      titleDetail: "Chi tiết lịch hẹn khám",
+      titleDetail: "Chi tiết chức vụ",
       currentItem: {},
       isAdd: false,
-      idField: "examScheduleID",
+      idField: "positionID",
     };
   },
   computed: {},
@@ -84,7 +81,7 @@ export default {
     async loadData(param = {}) {
       const me = this;
       let payload = { ...me.payload, ...param };
-      let res = await examScheduleApi.getListAsync(payload);
+      let res = await positionApi.getListAsync(payload);
       if (res && res.data.length >= 0 && res.total >= 0) {
         me.data = res.data;
         me.total = res.total;
@@ -118,7 +115,7 @@ export default {
      */
     async save() {
       const me = this;
-      let res = await examScheduleApi.insertOrUpdateAsync(me.currentItem);
+      let res = await positionApi.insertOrUpdateAsync(me.currentItem);
       if (me.isAdd) {
         res
           ? me.$toast.success("Thêm mới thành công")
@@ -138,7 +135,7 @@ export default {
      */
     async deleteRow(data) {
       const me = this;
-      let res = await examScheduleApi.deleteAsync(
+      let res = await positionApi.deleteAsync(
         `${me.idField}=${data[me.idField]}`
       );
       if (res) {

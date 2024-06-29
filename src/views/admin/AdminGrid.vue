@@ -7,35 +7,33 @@
     <div class="line"></div>
     <div class="title">{{ title }}</div>
     <div class="under-title">
-      <MsInput
+      <ms-input
         :placeholder="'Tìm kiếm'"
-        :required="true"
-        :styleInput="{ width: '500px', color: 'blue' }"
+        :inpPopupDetail="true"
         @enterInput="enterInput"
         v-model="textSearch"
-      ></MsInput>
-      <MsButton
+      ></ms-input>
+      <ms-button
+        v-if="showButtonAdd"
         @actionButtonClick="actionButtonClick"
         :placeholder="'Thêm mới'"
-      ></MsButton>
+      ></ms-button>
     </div>
     <div class="grid-viewer">
-      <MsGridViewer
+      <ms-grid-viewer
         :columns="columns"
         :data="data"
-        :totalRecord="103"
+        :totalRecord="total"
         @editRow="editRow"
         @deleteRow="deleteRow"
         @loadData="loadData"
-      ></MsGridViewer>
+        :showAction="showAction"
+      ></ms-grid-viewer>
     </div>
   </div>
 </template>
   
   <script>
-import MsInput from "@/components/MsInput.vue";
-import MsButton from "@/components/MsButton.vue";
-import MsGridViewer from "@/components/MsGridViewer.vue";
 export default {
   /**
    * Tên component
@@ -57,11 +55,27 @@ export default {
       type: Array,
       default: () => [],
     },
+    total: {
+      type: Number,
+      default: 0,
+    },
+    idField: {
+      type: String,
+      default: "",
+    },
+    showButtonAdd: {
+      type: Boolean,
+      default: true,
+    },
+    showAction: {
+      type: Boolean,
+      default: true,
+    },
   },
   /**
    * Component được sử dụng
    */
-  components: { MsInput, MsButton, MsGridViewer },
+  components: {},
   /**
    * Data
    */
@@ -76,21 +90,38 @@ export default {
    */
   methods: {
     actionButtonClick() {
-      console.log("ActionButton");
+      let obj = {
+        [this.idField]: 0,
+      };
+      this.$emit("add", this.idField ? obj : {}, true);
     },
+
     enterInput(value) {
-      console.log(value);
+      const me = this;
+      setTimeout(() => {
+        me.$emit("loadData", {
+          currentPage: 1,
+          pageSize: 20,
+          textSearch: value,
+        });
+      }, 300);
     },
+
     deleteRow(data) {
-      console.log(data);
-      this.$toast.success("delete thành công");
+      this.$emit("deleteRow", data);
     },
+
     editRow(data) {
-      console.log(data);
-      this.$toast.success("edit thành công");
+      this.$emit("editRow", data, false);
     },
+
     loadData(payload) {
-      console.log(payload);
+      const me = this;
+      me.$emit("loadData", {
+        currentPage: payload.pageChoice,
+        pageSize: payload.pageSize,
+        textSearch: me.textSearch,
+      });
     },
   },
   created() {},

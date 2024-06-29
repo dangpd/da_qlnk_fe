@@ -1,11 +1,112 @@
 <template>
   <div>
-    <AdminGrid :title="title" :columns="columns" :data="data"></AdminGrid>
+    <ms-admin-grid
+      :title="title"
+      :columns="columns"
+      :data="data"
+      :total="total"
+      :idField="idField"
+      @loadData="loadData"
+      @editRow="addoredit"
+      @add="addoredit"
+      @deleteRow="deleteRow"
+    ></ms-admin-grid>
   </div>
+
+  <ms-popup v-if="showPopup" @close="closePopup" @save="save">
+    <template v-slot:header>
+      {{ titleDetail }}
+    </template>
+    <template v-slot:body>
+      <div class="field-item">
+        <div style="width: 150px">
+          Họ và Tên <span class="input-requied">*</span>
+        </div>
+        <ms-input
+          :inpPopupDetail="true"
+          v-model="currentItem.fullname"
+          required
+        ></ms-input>
+      </div>
+      <div class="field-item">
+        <div style="width: 150px">
+          Tài khoản <span class="input-requied">*</span>
+        </div>
+        <ms-input
+          :inpPopupDetail="true"
+          v-model="currentItem.username"
+          required
+        ></ms-input>
+      </div>
+      <div class="field-item">
+        <div style="width: 150px">
+          Mật khẩu <span class="input-requied">*</span>
+        </div>
+        <ms-input
+          :inpPopupDetail="true"
+          v-model="currentItem.password"
+          required
+        ></ms-input>
+      </div>
+      <div class="field-item">
+        <div style="width: 150px">Chức vụ</div>
+        <ms-combobox
+          :useApi="false"
+          :dataProps="dataPositon"
+          v-model="currentItem.positionID"
+          propValue="positionID"
+          propName="positionName"
+          ref="cbxPosition"
+          style="width: 500px"
+        ></ms-combobox>
+      </div>
+      <div class="field-item">
+        <div style="width: 150px">Phòng</div>
+        <ms-combobox
+          :useApi="false"
+          :dataProps="dataRoom"
+          v-model="currentItem.clinicID"
+          propValue="clinicID"
+          propName="clinicName"
+          ref="cbxClinic"
+          style="width: 500px"
+        ></ms-combobox>
+      </div>
+      <div class="field-item">
+        <div style="width: 150px">Chuyên môn</div>
+        <ms-combobox
+          :useApi="false"
+          :dataProps="dataSpecialties"
+          v-model="currentItem.specialistID"
+          propValue="specialistID"
+          propName="specialistName"
+          ref="cbxSpecialist"
+          style="width: 500px"
+        ></ms-combobox>
+      </div>
+      <div class="field-item">
+        <div style="width: 150px">Quyền</div>
+        <ms-combobox
+          :useApi="false"
+          :dataProps="dataRole"
+          v-model="currentItem.roleID"
+          propValue="roleID"
+          propName="roleName"
+          ref="cbxRole"
+          style="width: 500px"
+        ></ms-combobox>
+      </div>
+    </template>
+    <template v-slot:footer></template>
+  </ms-popup>
 </template>
   
   <script>
-import AdminGrid from "../AdminGrid.vue";
+import userApi from "@/js/api/systemmanagement/userApi";
+import roomAPI from "@/js/api/systemmanagement/roomApi";
+import permissionApi from "@/js/api/systemmanagement/permissionApi";
+import specialistApi from "@/js/api/systemmanagement/specialistApi";
+import positionApi from "@/js/api/systemmanagement/positionApi";
 export default {
   /**
    * Tên component
@@ -18,7 +119,7 @@ export default {
   /**
    * Component được sử dụng
    */
-  components: { AdminGrid },
+  components: {},
   /**
    * Data
    */
@@ -26,14 +127,29 @@ export default {
     return {
       title: "Danh sách người dùng",
       columns: [
-        { name: "Họ và Tên", field: "name", width: "200px" },
-        { name: "Tài khoản", field: "account", width: "200px" },
-        { name: "Chức vụ", field: "position", width: "150px" },
-        { name: "Phòng", field: "room", width: "150px" },
-        { name: "Chuyên môn", field: "specialty", width: "200px" },
-        { name: "Quyền", field: "permissions", width: "150px" },
+        { name: "Họ và Tên", field: "fullname", width: "200px" },
+        { name: "Tài khoản", field: "username", width: "200px" },
+        { name: "Chức vụ", field: "positionName", width: "150px" },
+        { name: "Phòng", field: "clinicName", width: "150px" },
+        { name: "Chuyên môn", field: "specialistName", width: "200px" },
+        { name: "Quyền", field: "roleName", width: "150px" },
       ],
       data: [],
+      total: 0,
+      payload: {
+        currentPage: 1,
+        pageSize: 20,
+        textSearch: "",
+      },
+      showPopup: false,
+      titleDetail: "Chi tiết người dùng",
+      currentItem: {},
+      isAdd: false,
+      idField: "userID",
+      dataRoom: [],
+      dataRole: [],
+      dataPositon: [],
+      dataSpecialties: [],
     };
   },
   computed: {},
@@ -41,60 +157,97 @@ export default {
    * Phương thức
    */
   methods: {
-    generateData() {
-      // Số lượng dữ liệu cần sinh
-      const numberOfItems = 102;
-
-      // Mảng chứa các chức vụ có sẵn
-      const positions = [
-        "Manager",
-        "Developer",
-        "Designer",
-        "Tester",
-        "Support",
-      ];
-
-      // Mảng chứa các phòng ban có sẵn
-      const rooms = ["Room A", "Room B", "Room C", "Room D"];
-
-      // Mảng chứa các chuyên môn có sẵn
-      const specialties = [
-        "Cardiology",
-        "Dermatology",
-        "Neurology",
-        "Pediatrics",
-      ];
-
-      // Mảng chứa các quyền có sẵn
-      const permissions = ["Read", "Write", "Execute"];
-
-      // Sinh dữ liệu ngẫu nhiên
-      for (let i = 0; i <= numberOfItems; i++) {
-        const randomName = "Person " + (i + 1);
-        const randomAccount = "user" + (i + 1);
-        const randomPosition =
-          positions[Math.floor(Math.random() * positions.length)];
-        const randomRoom = rooms[Math.floor(Math.random() * rooms.length)];
-        const randomSpecialty =
-          specialties[Math.floor(Math.random() * specialties.length)];
-        const randomPermissions =
-          permissions[Math.floor(Math.random() * permissions.length)];
-
-        // Thêm vào mảng data
-        this.data.push({
-          name: randomName,
-          account: randomAccount,
-          position: randomPosition,
-          room: randomRoom,
-          specialty: randomSpecialty,
-          permissions: randomPermissions,
-        });
+    /**
+     * Load data
+     * @param {*} param
+     */
+    async loadData(param = {}) {
+      const me = this;
+      let payload = { ...me.payload, ...param };
+      let res = await userApi.getListAsync(payload);
+      if (res && res.data.length >= 0 && res.total >= 0) {
+        me.data = res.data;
+        me.total = res.total;
       }
     },
+
+    /**
+     * Đóng form
+     */
+    closePopup() {
+      const me = this;
+      me.showPopup = false;
+      me.loadData();
+    },
+
+    /**
+     * Thêm hoặc sửa
+     * @param {*} data
+     * @param {*} isNew
+     */
+    async addoredit(data = {}, isNew = false) {
+      const me = this;
+      me.currentItem = data;
+      me.isAdd = isNew;
+      let resRoom = await roomAPI.getDataComboboxAsync();
+      if (resRoom && resRoom.length >= 0) {
+        me.dataRoom = resRoom;
+      }
+      let resRole = await permissionApi.getDataComboboxAsync();
+      if (resRole && resRole.length >= 0) {
+        me.dataRole = resRole;
+      }
+      let resPositon = await positionApi.getDataComboboxAsync();
+      if (resPositon && resPositon.length >= 0) {
+        me.dataPositon = resPositon;
+      }
+      let resSpecialt = await specialistApi.getDataComboboxAsync();
+      if (resSpecialt && resSpecialt.length >= 0) {
+        me.dataSpecialties = resSpecialt;
+      }
+      me.showPopup = true;
+    },
+
+    /**
+     * Lưu fỏrm
+     * @param {*} isNew
+     */
+    async save() {
+      const me = this;
+      let res = await userApi.insertOrUpdateAsync(me.currentItem);
+      if (me.isAdd) {
+        res
+          ? me.$toast.success("Thêm mới thành công")
+          : me.$toast.error("Thêm mới thất bại");
+      } else {
+        res
+          ? me.$toast.success("Sửa thành công")
+          : me.$toast.error("Sửa thất bại");
+      }
+      me.showPopup = false;
+      await me.loadData();
+    },
+
+    /**
+     * Xóa
+     * @param {*} data
+     */
+    async deleteRow(data) {
+      const me = this;
+      let res = await userApi.deleteAsync(`${me.idField}=${data[me.idField]}`);
+      if (res) {
+        me.$toast.success("Xóa thành công");
+      } else {
+        me.$toast.error("Xóa thất bại");
+      }
+      await me.loadData();
+    },
   },
-  created() {
-    this.generateData();
+  async created() {
+    const me = this;
+    me.loadData();
   },
+
   /**
    * Theo dõi sự thay đổi
    */
@@ -103,4 +256,12 @@ export default {
 </script>
   
   <style>
+.field-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.input-requied {
+  color: red;
+}
 </style>

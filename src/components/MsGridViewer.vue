@@ -17,13 +17,14 @@
             }}
           </tr>
         </thead>
-        <tbody class="table-tbody">
+        <tbody class="table-tbody" v-if="data.length > 0">
           <tr
             v-for="(item, index) in data"
             :key="index"
             @click="trClick(item)"
             @dblclick="rowOnDblClick(item)"
             class="table-row"
+            :class="trSelected == item ? 'trClick' : ''"
           >
             <td v-if="serial" class="serial">{{ index + 1 }}</td>
             <!-- STT -->
@@ -35,10 +36,15 @@
             >
               {{ item[column.field] }}
             </td>
-            <td class="tr-action icon-delete" @click.stop="deleteRow(item)">
+            <td
+              v-if="showAction"
+              class="tr-action icon-delete"
+              @click.stop="deleteRow(item)"
+            >
               <i class="fa-regular fa-trash-can"></i>
             </td>
             <td
+              v-if="showAction"
               class="tr-action icon-edit"
               style="margin-right: 50px"
               @click.stop="editRow(item)"
@@ -46,6 +52,9 @@
               <i class="fa-solid fa-pen"></i>
             </td>
           </tr>
+        </tbody>
+        <tbody class="none-data" v-else>
+          Không có dữ liệu
         </tbody>
       </table>
     </div>
@@ -56,7 +65,10 @@
       <div class="paging__right">
         <div class="m-pagding-right-left">
           <div>
-            <MsSelectBox :data="dataSelectBox" v-model="pageSize"></MsSelectBox>
+            <ms-selectbox
+              :data="dataSelectBox"
+              v-model="pageSize"
+            ></ms-selectbox>
           </div>
         </div>
         <div class="m-pagding-right-right">
@@ -87,8 +99,6 @@
 </template>
 
 <script>
-import MsSelectBox from "@/components/MsSelectBox.vue";
-
 export default {
   name: "MsGridViewer",
   props: {
@@ -108,10 +118,12 @@ export default {
       type: Boolean,
       default: true,
     },
+    showAction: {
+      type: Boolean,
+      default: true,
+    },
   },
-  components: {
-    MsSelectBox,
-  },
+  components: {},
   computed: {
     dataSelectBox() {
       return [
@@ -122,20 +134,52 @@ export default {
         { feildShow: "100 bản ghi trên trang", feildValue: 100 },
       ];
     },
+    totalPages() {
+      return Math.ceil(this.totalRecord / this.pageSize);
+    },
+    pageNumber() {
+      let pagination = [];
+      let totalPages = this.totalPages;
+      let currentPage = this.pageChoice;
+
+      if (totalPages <= 5) {
+        for (let i = 1; i <= totalPages; i++) {
+          pagination.push(i);
+        }
+      } else {
+        if (currentPage <= 2) {
+          pagination = [1, 2, 3, "...", totalPages];
+        } else if (currentPage >= totalPages - 1) {
+          pagination = [1, "...", totalPages - 2, totalPages - 1, totalPages];
+        } else {
+          pagination = [
+            1,
+            "...",
+            currentPage - 1,
+            currentPage,
+            currentPage + 1,
+            "...",
+            totalPages,
+          ];
+        }
+      }
+      return pagination;
+    },
   },
   data() {
     return {
-      pageSize: 10,
-      pageNumber: [],
+      pageSize: 20,
       pageChoice: 1,
+      trSelected: {},
     };
   },
+  created() {},
   methods: {
     trClick(row) {
-      console.log(row);
+      this.trSelected = row;
     },
     rowOnDblClick(row) {
-      console.log(row);
+      this.$emit("editRow", row);
     },
     deleteRow(row) {
       this.$emit("deleteRow", row);
@@ -172,7 +216,10 @@ export default {
       }
     },
     createPageNumber() {
-      let totalPages = Math.ceil(this.totalRecord / this.pageSize);
+      let totalPages =
+        this.totalRecord / this.pageSize != 0
+          ? this.totalRecord / this.pageSize + 1
+          : this.totalRecord / this.pageSize;
       let currentPage = this.pageChoice;
       let pagination = [];
 
@@ -202,8 +249,10 @@ export default {
       this.pageNumber = pagination;
     },
   },
-  mounted() {
-    this.createPageNumber();
+  async mounted() {
+    this.$nextTick(async () => {
+      await this.createPageNumber();
+    });
   },
   watch: {
     pageSize: {

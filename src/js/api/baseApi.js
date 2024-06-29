@@ -6,34 +6,52 @@ class BaseApi extends baseService {
     // Không cần khai báo endpoint ở đây, vì sẽ được định nghĩa trong lớp con
   }
 
-  async getAll(showLoading = true) {
-    const endpoint = this.endpoint;
-    return this.get(endpoint, showLoading);
+  async getListAsync(data, showLoading = true) {
+    let endpoint = `${this.endpoint}/GetList`;
+    let res = await this.post(endpoint, data, showLoading);
+    if (!res || res.status == 500) {
+      return null;
+    }
+    if (res && res.status == 200) {
+      return res.data;
+    }
+    return res;
   }
 
-  async getById(id, showLoading = true) {
-    const endpoint = `${this.endpoint}/${id}`;
-    return this.get(endpoint, showLoading);
+  async insertOrUpdateAsync(data, showLoading = true) {
+    let endpoint = `${this.endpoint}/InsertOrUpdate`;
+    let res = await this.post(endpoint, data, showLoading);
+    if (!res || res.status == 500) {
+      return null;
+    }
+    if (res && res.status == 200) {
+      return res.isOk;
+    }
+    return res;
   }
 
-  async add(brandData, showLoading = true) {
-    const endpoint = this.endpoint;
-    return this.post(endpoint, brandData, showLoading);
+  async deleteAsync(payload, showLoading = true) {
+    let endpoint = `${this.endpoint}/Delete?${payload}`;
+    let res = await this.delete(endpoint, showLoading);
+    if (!res || res.status == 500) {
+      return null;
+    }
+    if (res && res.status == 200) {
+      return res.isOk;
+    }
+    return res;
   }
 
-  async update(id, brandData, showLoading = true) {
-    const endpoint = `${this.endpoint}/${id}`;
-    return this.put(endpoint, brandData, showLoading);
-  }
-
-  async delete(id, showLoading = true) {
-    const endpoint = `${this.endpoint}/${id}`;
-    return this.delete(endpoint, showLoading);
-  }
-
-  async filter(key = "", pageSize, pageNumber, showLoading = true) {
-    const endpoint = `${this.endpoint}/Filter?textSearch=${key}&pageSize=${pageSize}&pageNumber=${pageNumber}`;
-    return this.get(endpoint, showLoading);
+  async getDataComboboxAsync(showLoading = true) {
+    let endpoint = `${this.endpoint}/GetAllForCombobox`;
+    let res = await this.get(endpoint, showLoading);
+    if (!res || res.status == 500) {
+      return null;
+    }
+    if (res && res.status == 200) {
+      return res.data;
+    }
+    return res;
   }
 }
 

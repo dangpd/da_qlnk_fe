@@ -80,6 +80,10 @@ export default {
         this.messError = "";
       }
     },
+    validateInput() {
+      this.validate();
+      return this.showError;
+    },
     onEnter() {
       if (this.required) {
         this.validate();

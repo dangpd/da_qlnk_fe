@@ -26,6 +26,7 @@
           :inpPopupDetail="true"
           v-model="currentItem.fullname"
           required
+          ref="inpFullName"
         ></ms-input>
       </div>
       <div class="field-item">
@@ -36,6 +37,7 @@
           :inpPopupDetail="true"
           v-model="currentItem.username"
           required
+          ref="inpUserName"
         ></ms-input>
       </div>
       <div class="field-item">
@@ -46,6 +48,7 @@
           :inpPopupDetail="true"
           v-model="currentItem.password"
           required
+          ref="inpPassword"
         ></ms-input>
       </div>
       <div class="field-item">
@@ -214,6 +217,17 @@ export default {
      */
     async save() {
       const me = this;
+      let valite = ["inpFullName", "inpUserName", "inpPassword"];
+      let valid = false;
+      valite.forEach((item) => {
+        let ret = me.$refs[item].validateInput();
+        if (ret) {
+          valid = ret;
+        }
+      });
+      if (valid) {
+        return;
+      }
       let res = await userApi.insertOrUpdateAsync(me.currentItem);
       if (me.isAdd) {
         res

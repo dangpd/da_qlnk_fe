@@ -20,8 +20,8 @@
 }
 
 /* .m-inputc:focus {
-    border-color: #019160 !important;
-} */
+      border-color: #019160 !important;
+  } */
 
 .combobox__button {
   width: 36px;
@@ -39,21 +39,6 @@
 
 .combobox__button:focus-visible {
   outline: 1px solid #ddd;
-}
-
-.combobox__data,
-.selectbox__datadown {
-  max-height: 200px; /* Chiều cao tối đa cho dropdown */
-  overflow-y: auto; /* Cho phép scroll khi nội dung vượt quá chiều cao đã định */
-  /* Bỏ thuộc tính position: absolute; nếu không cần thiết */
-}
-.combobox__item {
-  height: 40px; /* Điều chỉnh chiều cao mong muốn */
-  line-height: 40px; /* Cân chỉnh để các mục trong combobox được căn giữa */
-  /* Các thuộc tính khác */
-}
-.m-inputc {
-  padding: 0 16px; /* Điều chỉnh padding trái và phải */
 }
 
 .combobox__data {

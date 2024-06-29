@@ -65,6 +65,9 @@
 .table-row:hover {
   background-color: #c4ffe1; /* Màu nền xanh nhạt khi hover */
 }
+.trClick {
+  background-color: #e3fff1; /* Màu nền xanh nhạt khi hover */
+}
 
 .tr-item {
   padding-left: 10px;
@@ -140,4 +143,11 @@
 .text-next-pre {
   margin-left: 5px;
   cursor: pointer;
+}
+.none-data {
+  width: 100%;
+  height: calc(100vh - 200px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

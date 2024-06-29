@@ -19,11 +19,27 @@
     </template>
     <template v-slot:body>
       <div class="field-item">
-        <div style="width: 150px">Tên phòng</div>
+        <div style="width: 150px">Tên thuốc</div>
         <ms-input
           :inpPopupDetail="true"
-          v-model="currentItem.clinicName"
+          v-model="currentItem.medicineName"
         ></ms-input>
+      </div>
+      <div class="field-item">
+        <div style="width: 150px">Danh mục thuốc</div>
+        <ms-combobox
+          :useApi="false"
+          :dataProps="dataMedicineCate"
+          v-model="currentItem.medicineCateID"
+          propValue="medicineCateID"
+          propName="medicineCateName"
+          ref="cbxMedicineCate"
+          style="width: 500px"
+        ></ms-combobox>
+      </div>
+      <div class="field-item">
+        <div style="width: 150px">Giá tiền</div>
+        <ms-input :inpPopupDetail="true" v-model="currentItem.fee"></ms-input>
       </div>
     </template>
     <template v-slot:footer></template>
@@ -31,12 +47,13 @@
 </template>
   
   <script>
-import examScheduleApi from "@/js/api/managerment/examScheduleApi";
+import medicineApi from "@/js/api/catalogmanagement/medicineApi";
+import medicineCateApi from "@/js/api/catalogmanagement/medicineCateApi";
 export default {
   /**
    * Tên component
    */
-  name: "AppointmentsManagement",
+  name: "MedicineManagement",
   /**
    * Hứng nhận
    */
@@ -50,13 +67,11 @@ export default {
    */
   data() {
     return {
-      title: "Danh sách lịch hẹn khám",
+      title: "Danh sách thuốc",
       columns: [
-        { name: "Họ và tên", field: "fullName", width: "200px" }, // Tên cột "Họ và tên" với độ rộng 200px
-        { name: "Mã bệnh nhân", field: "patientID", width: "150px" }, // Tên cột "Mã bệnh nhân" với độ rộng 150px
-        { name: "Thời gian khám", field: "dateScheduled", width: "150px" }, // Tên cột "Thời gian khám" với độ rộng 150px
-        { name: "Chỉ số khám", field: "state", width: "150px" }, // Tên cột "Chỉ số khám" với độ rộng 150px
-        { name: "Trạng thái", field: "status", width: "150px" }, // Tên cột "Trạng thái" với độ rộng 150px
+        { name: "Danh mục thuốc", field: "medicineCateName", width: "200px" }, // Cột "Tên" với độ rộng 200px
+        { name: "Tên thuốc", field: "medicineName", width: "200px" }, // Cột "Tên" với độ rộng 200px
+        { name: "Giá tiền", field: "fee", width: "150px" }, // Cột "Giá tiền" với độ rộng 150px
       ],
       data: [],
       total: 0,
@@ -66,10 +81,11 @@ export default {
         textSearch: "",
       },
       showPopup: false,
-      titleDetail: "Chi tiết lịch hẹn khám",
+      titleDetail: "Chi tiết thuốc",
       currentItem: {},
       isAdd: false,
-      idField: "examScheduleID",
+      idField: "medicineID",
+      dataMedicine: [],
     };
   },
   computed: {},
@@ -84,7 +100,7 @@ export default {
     async loadData(param = {}) {
       const me = this;
       let payload = { ...me.payload, ...param };
-      let res = await examScheduleApi.getListAsync(payload);
+      let res = await medicineApi.getListAsync(payload);
       if (res && res.data.length >= 0 && res.total >= 0) {
         me.data = res.data;
         me.total = res.total;
@@ -105,11 +121,15 @@ export default {
      * @param {*} data
      * @param {*} isNew
      */
-    addoredit(data = {}, isNew = false) {
+    async addoredit(data = {}, isNew = false) {
       const me = this;
-      me.currentItem = data;
-      me.showPopup = true;
       me.isAdd = isNew;
+      me.currentItem = data;
+      let resMedicineCate = await medicineCateApi.getDataComboboxAsync();
+      if (resMedicineCate && resMedicineCate.length >= 0) {
+        me.dataMedicineCate = resMedicineCate;
+      }
+      me.showPopup = true;
     },
 
     /**
@@ -118,7 +138,7 @@ export default {
      */
     async save() {
       const me = this;
-      let res = await examScheduleApi.insertOrUpdateAsync(me.currentItem);
+      let res = await medicineApi.insertOrUpdateAsync(me.currentItem);
       if (me.isAdd) {
         res
           ? me.$toast.success("Thêm mới thành công")
@@ -138,7 +158,7 @@ export default {
      */
     async deleteRow(data) {
       const me = this;
-      let res = await examScheduleApi.deleteAsync(
+      let res = await medicineApi.deleteAsync(
         `${me.idField}=${data[me.idField]}`
       );
       if (res) {

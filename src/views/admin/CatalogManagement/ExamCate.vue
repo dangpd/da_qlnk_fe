@@ -19,24 +19,24 @@
     </template>
     <template v-slot:body>
       <div class="field-item">
-        <div style="width: 150px">Tên phòng</div>
+        <div style="width: 150px">Tên danh mục chỉ số khám</div>
         <ms-input
           :inpPopupDetail="true"
-          v-model="currentItem.clinicName"
+          v-model="currentItem.examCateName"
         ></ms-input>
       </div>
     </template>
     <template v-slot:footer></template>
   </ms-popup>
 </template>
-  
-  <script>
-import examScheduleApi from "@/js/api/managerment/examScheduleApi";
+    
+    <script>
+import examCateApi from "@/js/api/catalogmanagement/examCateApi";
 export default {
   /**
    * Tên component
    */
-  name: "AppointmentsManagement",
+  name: "ExamCateManagerment",
   /**
    * Hứng nhận
    */
@@ -50,13 +50,9 @@ export default {
    */
   data() {
     return {
-      title: "Danh sách lịch hẹn khám",
+      title: "Danh mục chỉ số khám",
       columns: [
-        { name: "Họ và tên", field: "fullName", width: "200px" }, // Tên cột "Họ và tên" với độ rộng 200px
-        { name: "Mã bệnh nhân", field: "patientID", width: "150px" }, // Tên cột "Mã bệnh nhân" với độ rộng 150px
-        { name: "Thời gian khám", field: "dateScheduled", width: "150px" }, // Tên cột "Thời gian khám" với độ rộng 150px
-        { name: "Chỉ số khám", field: "state", width: "150px" }, // Tên cột "Chỉ số khám" với độ rộng 150px
-        { name: "Trạng thái", field: "status", width: "150px" }, // Tên cột "Trạng thái" với độ rộng 150px
+        { name: "Tên danh mục chỉ số khám", field: "examCateName", width: "200px" },
       ],
       data: [],
       total: 0,
@@ -66,10 +62,10 @@ export default {
         textSearch: "",
       },
       showPopup: false,
-      titleDetail: "Chi tiết lịch hẹn khám",
+      titleDetail: "Chi tiết danh mục chỉ số khám",
       currentItem: {},
       isAdd: false,
-      idField: "examScheduleID",
+      idField: "examCateID",
     };
   },
   computed: {},
@@ -84,7 +80,7 @@ export default {
     async loadData(param = {}) {
       const me = this;
       let payload = { ...me.payload, ...param };
-      let res = await examScheduleApi.getListAsync(payload);
+      let res = await examCateApi.getListAsync(payload);
       if (res && res.data.length >= 0 && res.total >= 0) {
         me.data = res.data;
         me.total = res.total;
@@ -118,7 +114,7 @@ export default {
      */
     async save() {
       const me = this;
-      let res = await examScheduleApi.insertOrUpdateAsync(me.currentItem);
+      let res = await examCateApi.insertOrUpdateAsync(me.currentItem);
       if (me.isAdd) {
         res
           ? me.$toast.success("Thêm mới thành công")
@@ -138,7 +134,7 @@ export default {
      */
     async deleteRow(data) {
       const me = this;
-      let res = await examScheduleApi.deleteAsync(
+      let res = await examCateApi.deleteAsync(
         `${me.idField}=${data[me.idField]}`
       );
       if (res) {
@@ -160,8 +156,8 @@ export default {
   watch: {},
 };
 </script>
-  
-  <style>
+    
+    <style>
 .field-item {
   display: flex;
   align-items: center;

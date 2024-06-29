@@ -1,11 +1,19 @@
 <template>
   <div>
-    <AdminGrid :title="title" :columns="columns" :data="data"></AdminGrid>
+    <ms-admin-grid
+      :title="title"
+      :columns="columns"
+      :data="data"
+      :total="total"
+      :idField="idField"
+      :showButtonAdd="false"
+      :showAction="false"
+    ></ms-admin-grid>
   </div>
 </template>
   
   <script>
-import AdminGrid from "../AdminGrid.vue";
+import permissionApi from "@/js/api/systemmanagement/permissionApi";
 export default {
   /**
    * Tên component
@@ -18,7 +26,7 @@ export default {
   /**
    * Component được sử dụng
    */
-  components: { AdminGrid },
+  components: {},
   /**
    * Data
    */
@@ -26,10 +34,17 @@ export default {
     return {
       title: "Danh sách quyền",
       columns: [
-        { name: "Tên quyền", field: "permissionName", width: "200px" },
-        { name: "Số lượng", field: "quantity", width: "100px" },
+        { name: "Tên quyền", field: "roleName", width: "200px" },
+        { name: "Số lượng", field: "totalUser", width: "100px" },
       ],
       data: [],
+      total: 0,
+      payload: {
+        currentPage: 1,
+        pageSize: 20,
+        textSearch: "",
+      },
+      idField: "roleID",
     };
   },
   computed: {},
@@ -37,41 +52,25 @@ export default {
    * Phương thức
    */
   methods: {
-    generatePermissionData() {
-      // Số lượng dữ liệu cần sinh
-      const numberOfItems = 50; // Ví dụ 50 quyền
-
-      // Mảng chứa các tên quyền có sẵn
-      const permissionNames = [
-        "Quyền A",
-        "Quyền B",
-        "Quyền C",
-        "Quyền D",
-        "Quyền E",
-        "Quyền F",
-        "Quyền G",
-        "Quyền H",
-        "Quyền I",
-        "Quyền J",
-      ];
-
-      // Sinh dữ liệu ngẫu nhiên
-      for (let i = 0; i < numberOfItems; i++) {
-        const randomPermissionName =
-          permissionNames[Math.floor(Math.random() * permissionNames.length)];
-        const randomQuantity = Math.floor(Math.random() * 100 + 1); // Số lượng từ 1 đến 100
-
-        // Thêm vào mảng data
-        this.data.push({
-          permissionName: randomPermissionName,
-          quantity: randomQuantity,
-        });
+    /**
+     * Load data
+     * @param {*} param
+     */
+    async loadData(param = {}) {
+      const me = this;
+      let payload = { ...me.payload, ...param };
+      let res = await permissionApi.getListAsync(payload);
+      if (res && res.data.length >= 0 && res.total >= 0) {
+        me.data = res.data;
+        me.total = res.total;
       }
     },
   },
-  created() {
-    this.generatePermissionData();
+  async created() {
+    const me = this;
+    me.loadData();
   },
+
   /**
    * Theo dõi sự thay đổi
    */
@@ -80,4 +79,9 @@ export default {
 </script>
   
   <style>
+.field-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
 </style>

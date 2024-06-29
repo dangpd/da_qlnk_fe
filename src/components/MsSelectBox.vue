@@ -94,15 +94,17 @@ export default {
      */
     itemOnSelect(item) {
       var me = this;
-      this.itemSelected = item;
-      // Set index cuar item duwojc chon
-      this.indexItemSelect = me.findIndexSelected; //Lấy tại computed
-      // Gán giá trị hiển thị bằng giá trị propName
-      this.value = item[this.feildShow];
-      // Thực hiện update data khi dữ liệu thay đổi
-      this.$emit("update:modelValue", item.feildValue);
-      // Ẩn data
-      this.isShowData = false;
+      if (me.modelValue != item.feildValue) {
+        this.itemSelected = item;
+        // Set index cuar item duwojc chon
+        this.indexItemSelect = me.findIndexSelected; //Lấy tại computed
+        // Gán giá trị hiển thị bằng giá trị propName
+        this.value = item[this.feildShow];
+        // Thực hiện update data khi dữ liệu thay đổi
+        this.$emit("update:modelValue", item.feildValue);
+        // Ẩn data
+        this.isShowData = false;
+      }
     },
     /**
      * Ẩn danh sách item
@@ -122,7 +124,7 @@ export default {
         case enumResouce.KEY_CODE.ENTER:
           // Gán giá trị item trên data search
           // eslint-disable-next-line no-case-declarations
-          if (this.indexItemSelect) {
+          if (this.indexItemSelect >= 0) {
             const item = this.dataMain[this.indexItemSelect];
             this.itemOnSelect(item);
           }
@@ -193,6 +195,6 @@ export default {
 };
 </script>
   <style scoped>
-@import url(../assets/css/components/combobox.css);
+@import url(../assets/css/components/selectbox.css);
 </style>
   

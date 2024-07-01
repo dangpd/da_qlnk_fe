@@ -5,13 +5,15 @@
       v-click-outside-element="closeBtn"
       @click="showBtnLogout"
     >
-      <div class="header1" :class="{ 'text-decr': showLogout }">
+      <div class="header1">
         <img
           class="header-img"
           src="../../assets/image/logonhakhoa.jpg"
           alt=""
         />
-        Xin chào, {{ fullName }}
+        <div :class="{ 'text-decr': showLogout }">Xin chào, {{ fullName }}</div>
+
+        <i style="padding-left: 6px" class="fa-solid fa-chevron-down"></i>
       </div>
       <div class="logout" v-show="showLogout" @click.stop="logout">
         Đăng xuất
@@ -142,7 +144,7 @@ export default {
       this.$emit("editRow", data, false);
     },
 
-    upgradeRow(data){
+    upgradeRow(data) {
       this.$emit("upgradeRow", data, false, true);
     },
 

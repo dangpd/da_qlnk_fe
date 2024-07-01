@@ -11,7 +11,7 @@ import Statistics from "@/views/admin/Statistics.vue"; // Trang thống kê
 // Management
 import Management from "@/views/admin/Management/Management.vue"; // Trang quản lý
 import PatientReception from "@/views/admin/Management/PatientReception.vue"; // Trang tiếp đón bệnh nhân
-import MedicalRecords from "@/views/admin/Management/MedicalRecords.vue"; // Trang danh sách phiếu khám bệnh
+import ExamResult from "@/views/admin/Management/ExamResult.vue"; // Trang danh sách phiếu khám bệnh
 import Patients from "@/views/admin/Management/Patients.vue"; // Trang danh sách bệnh nhân
 import Appointments from "@/views/admin/Management/ExamSchedule.vue"; // Trang lịch hẹn khám
 import MedicalHistory from "@/views/admin/Management/MedicalHistory.vue"; // Trang lịch sử khám bệnh
@@ -42,7 +42,7 @@ const routes = [
         component: Management,
         children: [
           { path: "patient-reception", component: PatientReception }, // Đường dẫn đến trang tiếp đón bệnh nhân
-          { path: "medical-records", component: MedicalRecords }, // Đường dẫn đến trang danh sách phiếu khám bệnh
+          { path: "exam-result", component: ExamResult }, // Đường dẫn đến trang danh sách phiếu khám bệnh
           { path: "patients", component: Patients }, // Đường dẫn đến trang danh sách bệnh nhân
           { path: "appointments", component: Appointments }, // Đường dẫn đến trang lịch hẹn khám
           { path: "medical-history", component: MedicalHistory }, // Đường dẫn đến trang lịch sử khám bệnh

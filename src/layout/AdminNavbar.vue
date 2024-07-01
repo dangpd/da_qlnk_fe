@@ -59,7 +59,7 @@ export default {
             },
             {
               name: "DS phiếu khám bệnh",
-              url: "/management/medical-records",
+              url: "/management/exam-result",
             },
             { name: "DS bệnh nhân", url: "/management/patients" },
             { name: "Lịch hẹn khám", url: "/management/appointments" },

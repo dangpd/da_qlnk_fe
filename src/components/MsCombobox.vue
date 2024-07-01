@@ -101,7 +101,9 @@ export default {
     } else {
       this.entitySearch = JSON.parse(JSON.stringify(this.dataProps));
       this.entities = JSON.parse(JSON.stringify(this.dataProps));
-      let obj = this.entities.find((x) => x[this.propValue] == this.modelValue);
+      let obj = this.entities.find(
+        (x) => x[this.propValue] == this.modelValue && this.modelValue
+      );
       if (obj && Object.keys(obj).length > 0) {
         this.textSelected = obj[this.propName];
       }

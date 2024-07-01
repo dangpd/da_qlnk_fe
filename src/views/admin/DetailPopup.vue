@@ -13,7 +13,7 @@
           <div class="footer-button">
             <ms-button
               @click.stop="$emit('save')"
-              :placeholder="'Lưu'"
+              :placeholder="placeholderSave"
             ></ms-button>
             <ms-button
               type="secound"
@@ -30,6 +30,12 @@
   <script>
 export default {
   name: "DetailPopup",
+  props: {
+    placeholderSave: {
+      type: String,
+      default: "Lưu",
+    },
+  },
 };
 </script>
   

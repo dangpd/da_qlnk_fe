@@ -13,11 +13,28 @@
     ></ms-admin-grid>
   </div>
 
-  <ms-popup v-if="showPopup" @close="closePopup" @save="save">
+  <ms-popup
+    v-if="showPopup"
+    @close="closePopup"
+    @save="save"
+    :placeholderSave="getPlaceholderSave()"
+  >
     <template v-slot:header>
       {{ titleDetail }}
     </template>
     <template v-slot:body>
+      <div class="field-item">
+        <div style="width: 150px">Bác sĩ khám</div>
+        <ms-combobox
+          :useApi="false"
+          :dataProps="dataDoctor"
+          v-model="currentItem.DoctorID"
+          propValue="DoctorID"
+          propName="DoctorName"
+          ref="cbxDoctor"
+          style="width: 500px"
+        ></ms-combobox>
+      </div>
       <div class="field-item">
         <div style="width: 150px">Bệnh nhân khám</div>
         <ms-combobox
@@ -50,22 +67,7 @@
       </div>
       <div class="field-item">
         <div style="width: 150px">Trạng thái</div>
-        <ms-input
-          :inpPopupDetail="true"
-          v-model="currentItem.Status"
-        ></ms-input>
-      </div>
-      <div class="field-item">
-        <div style="width: 150px">Bác sĩ khám</div>
-        <ms-combobox
-          :useApi="false"
-          :dataProps="dataDoctor"
-          v-model="currentItem.DoctorID"
-          propValue="DoctorID"
-          propName="DoctorName"
-          ref="cbxDoctor"
-          style="width: 500px"
-        ></ms-combobox>
+        <div>{{ getStatus() }}</div>
       </div>
     </template>
     <template v-slot:footer></template>
@@ -75,6 +77,7 @@
   <script>
 import examScheduleApi from "@/js/api/managerment/examScheduleApi";
 import patientApi from "@/js/api/managerment/patientApi";
+import enumResouce from "@/js/resource/resource";
 export default {
   /**
    * Tên component
@@ -128,6 +131,46 @@ export default {
    * Phương thức
    */
   methods: {
+    getStatus() {
+      const me = this;
+      if (me.isAdd) {
+        return "Mới tạo";
+      } else {
+        switch (me.currentItem.Status) {
+          case enumResouce.statusExamSchedule.WaitingExamination:
+            return "Chờ tới khám";
+          case enumResouce.statusExamSchedule.Examined:
+            return "Đã khám";
+          case enumResouce.statusExamSchedule.Overdue:
+            return "Quá hạn";
+          case enumResouce.statusExamSchedule.Canceled:
+            return "Đã hủy";
+          default:
+            return "";
+        }
+        //Xác định theo stattus
+      }
+    },
+    getPlaceholderSave() {
+      const me = this;
+      if (me.isAdd) {
+        return "Thêm mới";
+      } else {
+        switch (me.currentItem.Status) {
+          case enumResouce.statusExamSchedule.WaitingExamination:
+            return "Chờ tới khám";
+          case enumResouce.statusExamSchedule.Examined:
+            return "Đã khám";
+          case enumResouce.statusExamSchedule.Overdue:
+            return "Quá hạn";
+          case enumResouce.statusExamSchedule.Canceled:
+            return "Đã hủy";
+          default:
+            return "";
+        }
+        //Xác định theo stattus
+      }
+    },
     /**
      * Load data
      * @param {*} param
@@ -158,9 +201,11 @@ export default {
      */
     async addoredit(data = {}, isNew = false) {
       const me = this;
-      me.currentItem = {};
       me.isAdd = isNew;
       me.currentItem = data;
+      if (!isNew) {
+        me.currentItem.Status += 1;
+      }
       let res = await patientApi.getDataComboboxAsync();
       if (res && res.length >= 0) {
         me.dataPatient = res;
@@ -174,6 +219,42 @@ export default {
      */
     async save() {
       const me = this;
+      debugger;
+      let param = {
+        examSchedule: {
+          state: 1,
+          createdDate: new Date(),
+          createdBy: "pddang",
+          modifiedDate: new Date(),
+          modifiedBy: "pddang",
+          examScheduleID: me.currentItem.examScheduleID,
+          dateScheduled: new Date(),
+          patientID: 0,
+          doctorID: 0,
+          status: me.isAdd ? 0 : me.currentItem.status + 1,
+          examContent: me.currentItem.examContent,
+        },
+        examResult: {
+          state: 1,
+          createdDate: new Date(),
+          createdBy: "pddang",
+          modifiedDate: new Date(),
+          modifiedBy: "pddang",
+          examResultID: 0,
+          examResultNumber: "string",
+          patientID: 0,
+          doctorID: 0,
+          receptionistID: 0,
+          examScheduleID: 0,
+          examDate: "2024-06-30T01:56:32.500Z",
+          status: 0,
+          feeExam: 0,
+          feeMedicine: 0,
+          feeTotal: 0,
+          diagnose: "string",
+          handlingDirection: "string",
+        },
+      };
       let res = await examScheduleApi.insertOrUpdateAsync(me.currentItem);
       if (me.isAdd) {
         res

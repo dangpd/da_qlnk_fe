@@ -7,6 +7,7 @@
       :total="total"
       :idField="idField"
       @loadData="loadData"
+      @upgradeRow="addoredit"
       @editRow="addoredit"
       @add="addoredit"
       @deleteRow="deleteRow"
@@ -28,9 +29,9 @@
         <ms-combobox
           :useApi="false"
           :dataProps="dataDoctor"
-          v-model="currentItem.DoctorID"
-          propValue="DoctorID"
-          propName="DoctorName"
+          v-model="currentItem.doctorID"
+          propValue="doctorID"
+          propName="fullname"
           ref="cbxDoctor"
           style="width: 500px"
         ></ms-combobox>
@@ -40,8 +41,8 @@
         <ms-combobox
           :useApi="false"
           :dataProps="dataPatient"
-          v-model="currentItem.PatientID"
-          propValue="PatientID"
+          v-model="currentItem.patientID"
+          propValue="patientID"
           propName="fullname"
           ref="cbxPatient"
           style="width: 500px"
@@ -50,7 +51,7 @@
       <div class="field-item">
         <div style="width: 150px">Thời gian khám</div>
         <el-date-picker
-          v-model="currentItem.DateScheduled"
+          v-model="currentItem.dateScheduled"
           format="YYYY/MM/DD"
           value-format="YYYY-MM-DD"
           type="date"
@@ -62,7 +63,7 @@
         <div style="width: 150px">Nội dung khám</div>
         <ms-input
           :inpPopupDetail="true"
-          v-model="currentItem.ExamContent"
+          v-model="currentItem.examContent"
         ></ms-input>
       </div>
       <div class="field-item">
@@ -78,6 +79,7 @@
 import examScheduleApi from "@/js/api/managerment/examScheduleApi";
 import patientApi from "@/js/api/managerment/patientApi";
 import enumResouce from "@/js/resource/resource";
+import userAPI from "@/js/api/systemmanagement/userApi";
 export default {
   /**
    * Tên component
@@ -98,17 +100,17 @@ export default {
     return {
       title: "Danh sách lịch hẹn khám",
       columns: [
-        { name: "Họ và tên", field: "Fullname", width: "200px" }, // Tên cột "Họ và tên" với độ rộng 200px
-        { name: "Mã bệnh nhân", field: "PatientNumber", width: "150px" }, // Tên cột "Mã bệnh nhân" với độ rộng 150px
+        { name: "Họ và tên", field: "fullname", width: "200px" }, // Tên cột "Họ và tên" với độ rộng 200px
+        { name: "Mã bệnh nhân", field: "patientNumber", width: "150px" }, // Tên cột "Mã bệnh nhân" với độ rộng 150px
         {
           name: "Thời gian khám",
-          field: "DateScheduled",
+          field: "dateScheduled",
           type: "datetime",
           width: "150px",
         }, // Tên cột "Thời gian khám" với độ rộng 150px
-        { name: "Bác sĩ khám", field: "DoctorName", width: "150px" }, // Tên cột "Mã bệnh nhân" với độ rộng 150px
-        { name: "Nội dung khám", field: "ExamContent", width: "150px" }, // Tên cột "Mã bệnh nhân" với độ rộng 150px
-        { name: "Trạng thái", field: "StatusName", width: "150px" }, // Tên cột "Trạng thái" với độ rộng 150px
+        { name: "Bác sĩ khám", field: "doctorName", width: "150px" }, // Tên cột "Mã bệnh nhân" với độ rộng 150px
+        { name: "Nội dung khám", field: "examContent", width: "150px" }, // Tên cột "Mã bệnh nhân" với độ rộng 150px
+        { name: "Trạng thái", field: "statusName", width: "150px" }, // Tên cột "Trạng thái" với độ rộng 150px
       ],
       data: [],
       total: 0,
@@ -121,7 +123,7 @@ export default {
       titleDetail: "Chi tiết lịch hẹn khám",
       currentItem: {},
       isAdd: false,
-      idField: "ExamScheduleID",
+      idField: "examScheduleID",
       dataPatient: [],
       dataDoctor: [],
     };
@@ -133,10 +135,18 @@ export default {
   methods: {
     getStatus() {
       const me = this;
+      //Xác định theo stattus
       if (me.isAdd) {
         return "Mới tạo";
       } else {
-        switch (me.currentItem.Status) {
+        let status = me.currentItem.status;
+        if (status > 0) {
+          status -= 1;
+        }
+
+        switch (status) {
+          case enumResouce.statusExamSchedule.Add:
+            return "Mới tạo";
           case enumResouce.statusExamSchedule.WaitingExamination:
             return "Chờ tới khám";
           case enumResouce.statusExamSchedule.Examined:
@@ -147,16 +157,19 @@ export default {
             return "Đã hủy";
           default:
             return "";
+          //Xác định theo stattus
         }
-        //Xác định theo stattus
       }
     },
     getPlaceholderSave() {
       const me = this;
+      //Xác định theo stattus
       if (me.isAdd) {
-        return "Thêm mới";
+        return "Tạo mới";
       } else {
-        switch (me.currentItem.Status) {
+        switch (me.currentItem.status) {
+          case enumResouce.statusExamSchedule.Add:
+            return "Lưu";
           case enumResouce.statusExamSchedule.WaitingExamination:
             return "Chờ tới khám";
           case enumResouce.statusExamSchedule.Examined:
@@ -168,7 +181,6 @@ export default {
           default:
             return "";
         }
-        //Xác định theo stattus
       }
     },
     /**
@@ -180,6 +192,15 @@ export default {
       let payload = { ...me.payload, ...param };
       let res = await examScheduleApi.getListAsync(payload);
       if (res && res.data.length >= 0 && res.total >= 0) {
+        res.data.forEach((item) => {
+          if (item.status === 0) {
+            item.updateRow = false;
+            item.upGradeRow = true;
+          } else if (item.status > 0) {
+            item.updateRow = true;
+            item.upGradeRow = true;
+          }
+        });
         me.data = res.data;
         me.total = res.total;
       }
@@ -199,16 +220,20 @@ export default {
      * @param {*} data
      * @param {*} isNew
      */
-    async addoredit(data = {}, isNew = false) {
+    async addoredit(data = {}, isNew = false, isUpgrade = false) {
       const me = this;
       me.isAdd = isNew;
       me.currentItem = data;
-      if (!isNew) {
-        me.currentItem.Status += 1;
+      if (isUpgrade) {
+        me.currentItem.status += 1;
       }
       let res = await patientApi.getDataComboboxAsync();
       if (res && res.length >= 0) {
         me.dataPatient = res;
+      }
+      let resDoctors = await userAPI.getAllDoctorAsync();
+      if (resDoctors && resDoctors.data.length > 0) {
+        me.dataDoctor = resDoctors.data;
       }
       me.showPopup = true;
     },
@@ -219,51 +244,58 @@ export default {
      */
     async save() {
       const me = this;
-      debugger;
-      let param = {
-        examSchedule: {
-          state: 1,
-          createdDate: new Date(),
-          createdBy: "pddang",
-          modifiedDate: new Date(),
-          modifiedBy: "pddang",
-          examScheduleID: me.currentItem.examScheduleID,
-          dateScheduled: new Date(),
-          patientID: 0,
-          doctorID: 0,
-          status: me.isAdd ? 0 : me.currentItem.status + 1,
-          examContent: me.currentItem.examContent,
-        },
-        examResult: {
-          state: 1,
-          createdDate: new Date(),
-          createdBy: "pddang",
-          modifiedDate: new Date(),
-          modifiedBy: "pddang",
-          examResultID: 0,
-          examResultNumber: "string",
-          patientID: 0,
-          doctorID: 0,
-          receptionistID: 0,
-          examScheduleID: 0,
-          examDate: "2024-06-30T01:56:32.500Z",
-          status: 0,
-          feeExam: 0,
-          feeMedicine: 0,
-          feeTotal: 0,
-          diagnose: "string",
-          handlingDirection: "string",
-        },
-      };
-      let res = await examScheduleApi.insertOrUpdateAsync(me.currentItem);
-      if (me.isAdd) {
-        res
-          ? me.$toast.success("Thêm mới thành công")
-          : me.$toast.error("Thêm mới thất bại");
+      //Thêm mới hoặc sửa
+      if (me.isAdd || me.currentItem.status === 0) {
+        let param = {
+          examSchedule: {
+            examScheduleID: me.currentItem.examScheduleID,
+            dateScheduled: me.currentItem.dateScheduled,
+            patientID: me.currentItem.patientID,
+            doctorID: me.currentItem.doctorID,
+            status: me.isAdd ? 0 : me.currentItem.status,
+            examContent: me.currentItem.examContent,
+          },
+          examResult: {
+            examResultID: 0,
+            examResultNumber: "string",
+            patientID: me.currentItem.patientID,
+            doctorID: me.currentItem.doctorID,
+            examScheduleID: me.currentItem.examScheduleID,
+            examDate: new Date(),
+            status: me.isAdd ? 0 : me.currentItem.status,
+            feeExam: 0,
+            feeMedicine: 0,
+            feeTotal: 0,
+            diagnose: "",
+            handlingDirection: "",
+          },
+        };
+        let res = await examScheduleApi.insertOrUpdateAsync(param);
+        if (me.isAdd) {
+          res
+            ? me.$toast.success("Thêm mới thành công")
+            : me.$toast.error("Thêm mới thất bại");
+        } else {
+          res
+            ? me.$toast.success("Sửa thành công")
+            : me.$toast.error("Sửa thất bại");
+        }
       } else {
-        res
-          ? me.$toast.success("Sửa thành công")
-          : me.$toast.error("Sửa thất bại");
+        //Update status
+        let param = {
+          examScheduleID: me.currentItem.examScheduleID,
+          status: me.currentItem.status,
+        };
+        let res = await examScheduleApi.updateStatusAsync(param);
+        if (res && res.status == 200) {
+          me.$toast.success(
+            `Chuyển trạng thái ${me.getPlaceholderSave()} thành công`
+          );
+        } else if (res && res.status == 400) {
+          me.$toast.warning(res.errorMessage);
+        } else {
+          me.$toast.error("Có lỗi xảy ra vui lòng thử lại");
+        }
       }
       me.showPopup = false;
       await me.loadData();

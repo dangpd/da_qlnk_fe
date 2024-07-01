@@ -115,6 +115,17 @@ class BaseService {
     }
   }
 
+  async patch(endpoint, data, showLoading = true) {
+    try {
+      const response = await instance.patch(endpoint, data, {
+        showLoading,
+      });
+      return response.data;
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
   async delete(endpoint, showLoading = true) {
     try {
       const response = await instance.delete(endpoint, {

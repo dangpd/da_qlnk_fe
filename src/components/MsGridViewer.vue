@@ -44,12 +44,27 @@
               <i class="fa-regular fa-trash-can"></i>
             </td>
             <td
-              v-if="showAction"
+              v-if="showAction && !item.updateRow"
               class="tr-action icon-edit"
-              style="margin-right: 50px"
+              :style="{
+                marginRight: showAction && !item.updateRow ? '50px' : '',
+              }"
               @click.stop="editRow(item)"
             >
               <i class="fa-solid fa-pen"></i>
+            </td>
+            <td
+              v-if="item.upGradeRow"
+              class="tr-action icon-edit"
+              :style="{
+                right:
+                  showAction && !item.updateRow && item.upGradeRow
+                    ? '110px'
+                    : '60px',
+              }"
+              @click.stop="upgradeRow(item)"
+            >
+              <i class="fa-solid fa-arrow-right-long"></i>
             </td>
           </tr>
         </tbody>
@@ -210,7 +225,9 @@ export default {
     editRow(row) {
       this.$emit("editRow", row);
     },
-
+    upgradeRow(row) {
+      this.$emit("upgradeRow", row);
+    },
     prePage() {
       this.pageChoice -= 1;
       this.createPageNumber();

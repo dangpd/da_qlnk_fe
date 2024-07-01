@@ -22,20 +22,20 @@
         <div style="width: 150px">Họ và tên</div>
         <ms-input
           :inpPopupDetail="true"
-          v-model="currentItem.Fullname"
+          v-model="currentItem.fullname"
         ></ms-input>
       </div>
       <div class="field-item">
         <div style="width: 150px">Mã bệnh nhân</div>
         <ms-input
           :inpPopupDetail="true"
-          v-model="currentItem.PatientNumber"
+          v-model="currentItem.patientNumber"
         ></ms-input>
       </div>
       <div class="field-item">
         <div style="width: 150px">Ngày sinh</div>
         <el-date-picker
-          v-model="currentItem.Birthday"
+          v-model="currentItem.birthday"
           format="YYYY/MM/DD"
           value-format="YYYY-MM-DD"
           type="date"
@@ -48,7 +48,7 @@
         <ms-combobox
           :useApi="false"
           :dataProps="dataGender"
-          v-model="currentItem.Sex"
+          v-model="currentItem.sex"
           propValue="gender"
           propName="text"
           ref="cbxGender"
@@ -57,33 +57,33 @@
       </div>
       <div class="field-item">
         <div style="width: 150px">Số điện thoại</div>
-        <ms-input :inpPopupDetail="true" v-model="currentItem.Phone"></ms-input>
+        <ms-input :inpPopupDetail="true" v-model="currentItem.phone"></ms-input>
       </div>
       <div class="field-item">
         <div style="width: 150px">Địa chỉ</div>
         <ms-input
           :inpPopupDetail="true"
-          v-model="currentItem.Address"
+          v-model="currentItem.address"
         ></ms-input>
       </div>
       <div class="field-item">
         <div style="width: 150px">CCCD</div>
         <ms-input
           :inpPopupDetail="true"
-          v-model="currentItem.Identication"
+          v-model="currentItem.identication"
         ></ms-input>
       </div>
       <div class="field-item">
         <div style="width: 150px">Chuẩn đoán gần nhất</div>
         <ms-input
           :inpPopupDetail="true"
-          v-model="currentItem.LastDiagnose"
+          v-model="currentItem.lastDiagnose"
         ></ms-input>
       </div>
       <div class="field-item">
         <div style="width: 150px">Ngày khám gần nhất</div>
         <el-date-picker
-          v-model="currentItem.LastDiagnoseDate"
+          v-model="currentItem.lastDiagnoseDate"
           format="YYYY/MM/DD"
           value-format="YYYY-MM-DD"
           type="date"
@@ -119,26 +119,26 @@ export default {
     return {
       title: "Danh sách bệnh nhân",
       columns: [
-        { name: "Họ và tên", field: "Fullname", width: "200px" }, // Tên cột "Họ và tên" với độ rộng 200px
-        { name: "Mã bệnh nhân", field: "PatientNumber", width: "150px" }, // Tên cột "Mã bệnh nhân" với độ rộng 150px
+        { name: "Họ và tên", field: "fullname", width: "200px" }, // Tên cột "Họ và tên" với độ rộng 200px
+        { name: "Mã bệnh nhân", field: "patientNumber", width: "150px" }, // Tên cột "Mã bệnh nhân" với độ rộng 150px
         {
           name: "Ngày sinh",
-          field: "Birthday",
+          field: "birthday",
           type: "datetime",
           width: "150px",
         }, // Tên cột "Ngày sinh" với độ rộng 150px
-        { name: "Giới tính", field: "SexName", type: "combobox", width: "100px" }, // Tên cột "Giới tính" với độ rộng 100px
-        { name: "Số điện thoại", field: "Phone", width: "150px" }, // Tên cột "Số điện thoại" với độ rộng 150px
-        { name: "Địa chỉ", field: "Address", width: "250px" }, // Tên cột "Địa chỉ" với độ rộng 250px
-        { name: "CCCD", field: "Identication", width: "150px" }, // Tên cột "CCCD" với độ rộng 150px
+        { name: "Giới tính", field: "sexName", type: "combobox", width: "100px" }, // Tên cột "Giới tính" với độ rộng 100px
+        { name: "Số điện thoại", field: "phone", width: "150px" }, // Tên cột "Số điện thoại" với độ rộng 150px
+        { name: "Địa chỉ", field: "address", width: "250px" }, // Tên cột "Địa chỉ" với độ rộng 250px
+        { name: "CCCD", field: "identication", width: "150px" }, // Tên cột "CCCD" với độ rộng 150px
         {
           name: "Chuẩn đoán gần nhất",
-          field: "LastDiagnose",
+          field: "lastDiagnose",
           width: "250px",
         }, // Tên cột "Chuẩn đoán gần nhất" với độ rộng 250px
         {
           name: "Ngày khám gần nhất",
-          field: "LastDiagnoseDate",
+          field: "lastDiagnoseDate",
           type: "datetime",
           width: "150px",
         }, // Tên cột "Ngày khám gần nhất" với độ rộng 150px

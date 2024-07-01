@@ -37,6 +37,7 @@
         :columns="columns"
         :data="data"
         :totalRecord="total"
+        @upgradeRow="upgradeRow"
         @editRow="editRow"
         @deleteRow="deleteRow"
         @loadData="loadData"
@@ -139,6 +140,10 @@ export default {
 
     editRow(data) {
       this.$emit("editRow", data, false);
+    },
+
+    upgradeRow(data){
+      this.$emit("upgradeRow", data, false, true);
     },
 
     loadData(payload) {

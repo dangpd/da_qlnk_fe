@@ -51,21 +51,24 @@ export default {
         },
         {
           name: "Quản lý khám",
-          url: "/management",
+          url: "/examination-management",
           children: [
             {
               name: "Tiếp đón bệnh nhân",
-              url: "/management/patient-reception",
+              url: "/examination-management/patient-reception",
             },
             {
               name: "DS phiếu khám bệnh",
-              url: "/management/exam-result",
+              url: "/examination-management/exam-result",
             },
-            { name: "DS bệnh nhân", url: "/management/patients" },
-            { name: "Lịch hẹn khám", url: "/management/appointments" },
+            { name: "DS bệnh nhân", url: "/examination-management/patients" },
+            {
+              name: "Lịch hẹn khám",
+              url: "/examination-management/appointments",
+            },
             {
               name: "Lịch sử khám bệnh",
-              url: "/management/medical-history",
+              url: "/examination-management/medical-history",
             },
           ],
         },
@@ -119,10 +122,7 @@ export default {
   },
   methods: {
     checkActive(data) {
-      if (this.$route.path.split("/")[2] && data.split("/")[2]) {
-        return this.$route.path.split("/")[2] == data.split("/")[2];
-      }
-      return false;
+      return this.$route.path.includes(data);
     },
     changeRouter(url, hasChildren = false) {
       if (this.$route.path != url) {

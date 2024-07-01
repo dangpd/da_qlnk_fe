@@ -38,7 +38,7 @@ const routes = [
     children: [
       { path: "statistics", component: Statistics }, // Đường dẫn đến trang thống kê
       {
-        path: "management",
+        path: "examination-management",
         component: Management,
         children: [
           { path: "patient-reception", component: PatientReception }, // Đường dẫn đến trang tiếp đón bệnh nhân
